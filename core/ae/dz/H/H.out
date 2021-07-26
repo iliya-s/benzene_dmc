@@ -1,0 +1,222 @@
+#INFO: **** input file is /projects/ilsa8974/experiments/VMCr/papers/jpghf_realspace/benzene/cc/ae/dz/H/H.py ****
+import json
+import numpy as np
+from pyscf import lib, gto, scf, ao2mo, tools, fci, mcscf, cc
+from pyscf.shciscf import shci, settings
+
+atomstring = ""
+atomstring += f"H 0 0 0;"
+
+mol = gto.M(
+atom = atomstring,
+unit = "bohr",
+cart = False,
+spin = 1,
+basis = "ccpvdz",
+verbose = 5
+)
+mf = scf.UHF(mol).newton()
+norbs = mol.nao
+
+dm = mf.get_init_guess()
+
+dm = dm + (2.0 * np.random.rand(norbs, norbs) - 1.0) / 1000
+mf.max_cycle = 100
+mf.kernel(dm0 = dm)
+mf.analyze()
+
+mycc = mf.CCSD()
+mycc.run()
+print("\n")
+print('CCSD correlation energy: ', mycc.e_corr)
+print('CCSD total energy: ', mf.energy_tot() + mycc.e_corr)
+#INFO: ******************** input file end ********************
+
+
+System: uname_result(system='Linux', node='bnode0303.rc.int.colorado.edu', release='3.10.0-693.37.4.el7.x86_64', version='#1 SMP Fri Aug 10 12:34:55 EDT 2018', machine='x86_64', processor='x86_64')  Threads 1
+Python 3.7.3 (default, Mar 27 2019, 22:11:17) 
+[GCC 7.3.0]
+numpy 1.16.4  scipy 1.3.0
+Date: Wed Jun  9 13:15:39 2021
+PySCF version 1.7.5
+PySCF path  /projects/ilsa8974/apps/pyscf/pyscf
+GIT HEAD      ref: refs/heads/master
+GIT master branch  7a57d2f37184ea4cd3b52a590c945197b084f66d
+
+[CONFIG] conf_file None
+[INPUT] verbose = 5
+[INPUT] max_memory = 4000 
+[INPUT] num. atoms = 1
+[INPUT] num. electrons = 1
+[INPUT] charge = 0
+[INPUT] spin (= nelec alpha-beta = 2S) = 1
+[INPUT] symmetry False subgroup None
+[INPUT] Mole.unit = bohr
+[INPUT]  1 H      0.000000000000   0.000000000000   0.000000000000 AA    0.000000000000   0.000000000000   0.000000000000 Bohr
+[INPUT] ---------------- BASIS SET ---------------- 
+[INPUT] l, kappa, [nprim/nctr], expnt,             c_1 c_2 ...
+[INPUT] H
+[INPUT] 0    0    [3    /1   ]  13.01             0.019685
+                                1.962             0.137977
+                                0.4446            0.478148
+[INPUT] 0    0    [1    /1   ]  0.122                1
+[INPUT] 1    0    [1    /1   ]  0.727                1
+
+nuclear repulsion = 0
+number of shells = 3
+number of NR pGTOs = 7
+number of NR cGTOs = 5
+basis = ccpvdz
+ecp = {}
+CPU time:         0.43
+
+
+
+
+******** <class 'pyscf.scf.uhf.HF1e'> ********
+method = HF1e-UHF
+initial guess = minao
+damping factor = 0
+level_shift factor = 0
+DIIS = <class 'pyscf.scf.diis.CDIIS'>
+diis_start_cycle = 1
+diis_space = 8
+SCF conv_tol = 1e-09
+SCF conv_tol_grad = None
+SCF max_cycles = 50
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = /rc_scratch/ilsa8974/tmp_6h883xm
+max_memory 4000 MB (current use 64 MB)
+number electrons alpha = 1  beta = 0
+******** <class 'pyscf.scf.uhf.HF1e'> Newton solver flags ********
+SCF tol = 1e-09
+conv_tol_grad = None
+max. SCF cycles = 100
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = /rc_scratch/ilsa8974/tmp_6h883xm
+max_cycle_inner = 12
+max_stepsize = 0.05
+ah_start_tol = 1e+09
+ah_level_shift = 0
+ah_conv_tol = 1e-12
+ah_lindep = 1e-14
+ah_start_cycle = 1
+ah_max_cycle = 40
+ah_grad_trust_region = 2.5
+kf_interval = 4
+kf_trust_region = 5
+canonicalization = True
+max_memory 4000 MB (current use 64 MB)
+Set conv_tol_grad to 3.16228e-05
+multiplicity <S^2> = 0.75  2S+1 = 2
+E1 = -0.4919512812271408  Ecoul = 2.0603814747327176e-17
+Initial guess E= -0.491951281227141  |g|= 0.0702686
+    CPU time for initializing second order scf      0.01 sec, wall time      0.17 sec
+    |g|= 0.0703 (keyframe)
+    imic 1(1)  |g|= 0.0369  |dxi|= 0.05  max(|x|)= 0.104  |dr|= 0.05  eig= -0.00733  seig= 0.00494
+    imic 2(2)  |g|= 0.00361  |dxi|= 0.05  max(|x|)= 0.0553  |dr|=  0.1  eig= -0.00204  seig= 3.25e-08
+    imic 3(3)  |g|= 1.06e-07  |dxi|= 0.00542  max(|x|)= 0.00542  |dr|= 0.105  eig= -1.96e-05  seig= 4.95e-20
+    tot inner=3  4 JK  |g|= 1.06e-07  |u-1|= 0.105
+    CPU time for aug_hess in 3 inner iters      0.00 sec, wall time      0.00 sec
+multiplicity <S^2> = 0.75  2S+1 = 2
+E1 = -0.49927682636956566  Ecoul = 9.51908111686589e-18
+macro= 0  E= -0.499276826369566  delta_E= -0.00732555  |g|= 0.0702686  1 KF 4 JK
+    CPU time for cycle= 1      0.01 sec, wall time      0.01 sec
+    |g|= 0.00104 (keyframe), |g-correction|= 0.00104
+    imic 1(1)  |g|= 2.79e-06  |dxi|= 0.00152  max(|x|)= 0.00152  |dr|= 0.00152  eig= -1.58e-06  seig= 2.94e-05
+    tot inner=1  2 JK  |g|= 2.79e-06  |u-1|= 0.00152
+    CPU time for aug_hess in 1 inner iters      0.01 sec, wall time      0.05 sec
+multiplicity <S^2> = 0.75  2S+1 = 2
+E1 = -0.4992784034140706  Ecoul = 1.5990157231021112e-17
+macro= 1  E= -0.499278403414071  delta_E= -1.57704e-06  |g|= 0.00103649  1 KF 2 JK
+    CPU time for cycle= 2      0.01 sec, wall time      0.05 sec
+    |g|= 2.79e-06 (keyframe), |g-correction|= 3.2e-09
+    imic 1(1)  |g|= 2.79e-06  |dxi|= 1.17e-09  max(|x|)= 1.17e-09  |dr|= 1.17e-09  eig= -9.39e-19  seig= 2.32e-06
+    tot inner=1  2 JK  |g|= 2.79e-06  |u-1|= 1.17e-09
+    CPU time for aug_hess in 1 inner iters      0.01 sec, wall time      0.02 sec
+multiplicity <S^2> = 0.75  2S+1 = 2
+E1 = -0.4992784034140706  Ecoul = 1.4202632201792855e-17
+macro= 2  E= -0.499278403414071  delta_E= 0  |g|= 2.78757e-06  1 KF 2 JK
+    CPU time for cycle= 3      0.01 sec, wall time      0.02 sec
+Canonicalize SCF orbitals
+macro X = 3  E=-0.499278403414071  |g|= 2.78757e-06  total 4 KF 12 JK
+    CPU time for Second order SCF      0.03 sec, wall time      0.28 sec
+converged SCF energy = -0.499278403414071  <S^2> = 0.75  2S+1 = 2
+**** SCF Summaries ****
+Total Energy =                          -0.499278403414071
+Nuclear Repulsion Energy =               0.000000000000000
+One-electron Energy =                   -0.499278403414071
+Two-electron Energy =                    0.000000000000000
+**** MO energy ****
+                             alpha | beta                alpha | beta
+MO #1   energy= -0.499278403414071 | 0.0733474782782971 occ= 1 | 0
+MO #2   energy= 0.572444879572209  | 0.753291595159368  occ= 0 | 0
+MO #3   energy= 1.44302659880427   | 1.57363632945084   occ= 0 | 0
+MO #4   energy= 1.44302659881012   | 1.57363632945084   occ= 0 | 0
+MO #5   energy= 1.44302659881012   | 1.57363632945149   occ= 0 | 0
+ ** MO coefficients (expansion on meta-Lowdin AOs) for alpha spin **
+               #1        #2        #3        #4        #5       
+  0 H 1s       0.99745   0.07140  -0.00000  -0.00000  -0.00000
+  0 H 2s       0.07140  -0.99745   0.00000   0.00000   0.00000
+  0 H 2px     -0.00000  -0.00000  -0.39353   0.02180   0.91905
+  0 H 2py     -0.00000  -0.00000  -0.74600   0.57665  -0.33311
+  0 H 2pz     -0.00000  -0.00000  -0.53724  -0.81670  -0.21066
+ ** MO coefficients (expansion on meta-Lowdin AOs) for beta spin **
+               #1        #2        #3        #4        #5       
+  0 H 1s       0.93820  -0.34610   0.00000   0.00000   0.00000
+  0 H 2s       0.34610   0.93820  -0.00000  -0.00000  -0.00000
+  0 H 2px      0.00000  -0.00000  -0.63916   0.66079  -0.39349
+  0 H 2py      0.00000  -0.00000  -0.19816  -0.63586  -0.74593
+  0 H 2pz      0.00000  -0.00000   0.74311   0.39879  -0.53736
+
+To work with the spin densities directly, `use mulliken_meta_spin()` only printing them here.
+
+ ** Mulliken spin pop alpha/beta on meta-lowdin orthogonal AOs **
+ ** Mulliken Spin Density (per AO)  **
+spin_pop of  0 H 1s        0.99490
+spin_pop of  0 H 2s        0.00510
+spin_pop of  0 H 2px       0.00000
+spin_pop of  0 H 2py       0.00000
+spin_pop of  0 H 2pz       0.00000
+ ** Mulliken Spin Density (per atom)  **
+spin density of  0 H =      1.00000
+ ** Mulliken pop alpha/beta on meta-lowdin orthogonal AOs **
+ ** Mulliken pop       alpha | beta **
+pop of  0 H 1s        0.99490 | 0.00000   
+pop of  0 H 2s        0.00510 | 0.00000   
+pop of  0 H 2px       0.00000 | 0.00000   
+pop of  0 H 2py       0.00000 | 0.00000   
+pop of  0 H 2pz       0.00000 | 0.00000   
+In total             1.00000 | 0.00000   
+ ** Mulliken atomic charges   ( Nelec_alpha | Nelec_beta ) **
+charge of  0H =     -0.00000  (     1.00000      0.00000 )
+Dipole moment(X, Y, Z, Debye):  0.00000,  0.00000,  0.00000
+Converting <class 'pyscf.soscf.newton_ah.newton.<locals>.SecondOrderUHF'> to UHF
+
+******** <class 'pyscf.cc.uccsd.UCCSD'> ********
+CC2 = 0
+CCSD nocc = (1, 0), nmo = (5, 5)
+max_cycle = 50
+direct = 0
+conv_tol = 1e-07
+conv_tol_normt = 1e-06
+diis_space = 6
+diis_start_cycle = 0
+diis_start_energy_diff = 1e+09
+max_memory 4000 MB (current use 67 MB)
+E1 = -0.4992784034140706  Ecoul = 1.4202632201792855e-17
+Init t2, MP2 energy = -1.89010078570857e-35
+    CPU time for init mp2      0.00 sec, wall time      0.00 sec
+Init E_corr(CCSD) = -4.00068807556653e-12
+cycle = 1  E_corr(CCSD) = -5.0977332422696e-12  dE = -1.09704517e-12  norm(t1,t2) = 3.93549e-07
+    CPU time for CCSD iter      0.01 sec, wall time      0.01 sec
+    CPU time for CCSD      0.01 sec, wall time      0.01 sec
+UCCSD converged
+E(UCCSD) = -0.4992784034191683  E_corr = -5.097733242269604e-12
+
+
+CCSD correlation energy:  -5.097733242269604e-12
+E1 = -0.4992784034140706  Ecoul = 1.4202632201792855e-17
+CCSD total energy:  -0.49927840341916835

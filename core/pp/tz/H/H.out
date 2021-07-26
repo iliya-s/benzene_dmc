@@ -1,0 +1,721 @@
+#INFO: **** input file is /projects/ilsa8974/experiments/VMCr/papers/jpghf_realspace/benzene/cc/pp/dz/H/H.py ****
+import json
+import numpy as np
+from pyscf import lib, gto, scf, ao2mo, tools, fci, mcscf, cc
+from pyscf.shciscf import shci, settings
+
+atomstring = ""
+atomstring += f"H 0 0 0;"
+
+mol = gto.M(
+atom = atomstring,
+unit = "bohr",
+cart = False,
+basis = {
+'H':gto.basis.parse(
+'''
+H S
+23.843185  0.00411490
+10.212443  0.01046440
+4.374164  0.02801110
+1.873529  0.07588620
+0.802465  0.18210620
+0.343709  0.34852140
+0.147217  0.37823130
+0.063055  0.11642410
+H S
+0.091791  1.00000000
+H S
+0.287637  1.00000000
+H P
+0.393954  1.00000000
+H P
+1.462694  1.00000000
+H D
+1.065841  1.00000000
+'''
+)
+},
+ecp = {
+'H':gto.basis.parse_ecp(
+'''
+H nelec 0
+H ul
+1 21.24359 1.00000
+3 21.24359 21.24359
+2 21.77696 -10.85192
+H S
+2 1.00000 0.00000
+'''
+)
+},
+spin = 1,
+verbose = 5
+)
+mf = scf.UHF(mol).newton()
+norbs = mol.nao
+
+dm = mf.get_init_guess()
+
+dm = dm + (2.0 * np.random.rand(norbs, norbs) - 1.0) / 1000
+mf.max_cycle = 100
+mf.kernel(dm0 = dm)
+mf.analyze()
+
+mycc = mf.CCSD()
+mycc.run()
+print("\n")
+print('CCSD correlation energy: ', mycc.e_corr)
+print('CCSD total energy: ', mf.energy_tot() + mycc.e_corr)
+#INFO: ******************** input file end ********************
+
+
+System: uname_result(system='Linux', node='bnode0303.rc.int.colorado.edu', release='3.10.0-693.37.4.el7.x86_64', version='#1 SMP Fri Aug 10 12:34:55 EDT 2018', machine='x86_64', processor='x86_64')  Threads 1
+Python 3.7.3 (default, Mar 27 2019, 22:11:17) 
+[GCC 7.3.0]
+numpy 1.16.4  scipy 1.3.0
+Date: Wed Jun  9 13:52:14 2021
+PySCF version 1.7.5
+PySCF path  /projects/ilsa8974/apps/pyscf/pyscf
+GIT HEAD      ref: refs/heads/master
+GIT master branch  7a57d2f37184ea4cd3b52a590c945197b084f66d
+
+[CONFIG] conf_file None
+[INPUT] verbose = 5
+[INPUT] max_memory = 4000 
+[INPUT] num. atoms = 1
+[INPUT] num. electrons = 1
+[INPUT] charge = 0
+[INPUT] spin (= nelec alpha-beta = 2S) = 1
+[INPUT] symmetry False subgroup None
+[INPUT] Mole.unit = bohr
+[INPUT]  1 H      0.000000000000   0.000000000000   0.000000000000 AA    0.000000000000   0.000000000000   0.000000000000 Bohr
+[INPUT] ---------------- BASIS SET ---------------- 
+[INPUT] l, kappa, [nprim/nctr], expnt,             c_1 c_2 ...
+[INPUT] H
+[INPUT] 0    0    [8    /1   ]  23.843185         0.0041149
+                                10.212443         0.0104644
+                                4.374164          0.0280111
+                                1.873529          0.0758862
+                                0.802465          0.1821062
+                                0.343709          0.3485214
+                                0.147217          0.3782313
+                                0.063055          0.1164241
+[INPUT] 0    0    [1    /1   ]  0.091791             1
+[INPUT] 0    0    [1    /1   ]  0.287637             1
+[INPUT] 1    0    [1    /1   ]  0.393954             1
+[INPUT] 1    0    [1    /1   ]  1.462694             1
+[INPUT] 2    0    [1    /1   ]  1.065841             1
+
+nuclear repulsion = 0
+number of shells = 6
+number of NR pGTOs = 21
+number of NR cGTOs = 14
+basis = {'H': [[0, [23.843185, 0.0041149], [10.212443, 0.0104644], [4.374164, 0.0280111], [1.873529, 0.0758862], [0.802465, 0.1821062], [0.343709, 0.3485214], [0.147217, 0.3782313], [0.063055, 0.1164241]], [0, [0.091791, 1.0]], [0, [0.287637, 1.0]], [1, [0.393954, 1.0]], [1, [1.462694, 1.0]], [2, [1.065841, 1.0]]]}
+ecp = {'H': [0, [[-1, [[], [[21.24359, 1.0]], [[21.77696, -10.85192]], [[21.24359, 21.24359]], [], [], []]], [0, [[], [], [[1.0, 0.0]], [], [], [], []]]]]}
+CPU time:         0.36
+
+
+
+
+******** <class 'pyscf.scf.uhf.HF1e'> ********
+method = HF1e-UHF
+initial guess = minao
+damping factor = 0
+level_shift factor = 0
+DIIS = <class 'pyscf.scf.diis.CDIIS'>
+diis_start_cycle = 1
+diis_space = 8
+SCF conv_tol = 1e-09
+SCF conv_tol_grad = None
+SCF max_cycles = 50
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = /rc_scratch/ilsa8974/tmp_xz0fxet
+max_memory 4000 MB (current use 66 MB)
+number electrons alpha = 1  beta = 0
+******** <class 'pyscf.scf.uhf.HF1e'> Newton solver flags ********
+SCF tol = 1e-09
+conv_tol_grad = None
+max. SCF cycles = 100
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = /rc_scratch/ilsa8974/tmp_xz0fxet
+max_cycle_inner = 12
+max_stepsize = 0.05
+ah_start_tol = 1e+09
+ah_level_shift = 0
+ah_conv_tol = 1e-12
+ah_lindep = 1e-14
+ah_start_cycle = 1
+ah_max_cycle = 40
+ah_grad_trust_region = 2.5
+kf_interval = 4
+kf_trust_region = 5
+canonicalization = True
+max_memory 4000 MB (current use 66 MB)
+Set conv_tol_grad to 3.16228e-05
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+multiplicity <S^2> = 0.75  2S+1 = 2
+E1 = -0.4900029610361679  Ecoul = -5.205488401588436e-17
+Initial guess E= -0.490002961036168  |g|= 0.0734282
+    CPU time for initializing second order scf      0.01 sec, wall time      0.12 sec
+    |g|= 0.0734 (keyframe)
+    imic 1(1)  |g|= 0.0465  |dxi|= 0.0555  max(|x|)= 0.0942  |dr|= 0.0555  eig= -0.00767  seig= 0.00539
+    imic 2(2)  |g|= 0.0216  |dxi|= 0.05  max(|x|)= 0.0925  |dr|= 0.103  eig= -0.00416  seig= 0.000923
+    imic 3(3)  |g|= 4.5e-05  |dxi|= 0.0432  max(|x|)= 0.0432  |dr|= 0.145  eig= -0.000902  seig= 6.38e-09
+E1 = -0.4999922671215809  Ecoul = 9.249244419226565e-17
+Adjust keyframe g_orb to |g|= 0.00192  |g-correction|=0.00196  E=-0.499992267122 dE=-0.0099893
+Out of trust region. Restore previouse step
+    tot inner=3  5 JK  |g|= 0.0216  |u-1|= 0.0432
+    CPU time for aug_hess in 3 inner iters      0.01 sec, wall time      0.01 sec
+multiplicity <S^2> = 0.75  2S+1 = 2
+E1 = -0.4992176592643618  Ecoul = -1.309137777046603e-16
+macro= 0  E= -0.499217659264362  delta_E= -0.0092147  |g|= 0.0734282  2 KF 5 JK
+    CPU time for cycle= 1      0.01 sec, wall time      0.01 sec
+    |g|= 0.0206 (keyframe), |g-correction|= 0.00114
+    imic 1(1)  |g|= 0.000942  |dxi|= 0.0395  max(|x|)= 0.0395  |dr|= 0.0395  eig= -0.000782  seig= 0.00187
+    imic 2(2)  |g|= 9.48e-06  |dxi|= 0.00046  max(|x|)= 0.000454  |dr|= 0.0395  eig= -4.28e-07  seig= 1.28e-07
+    tot inner=2  3 JK  |g|= 9.48e-06  |u-1|= 0.0395
+    CPU time for aug_hess in 2 inner iters      0.01 sec, wall time      0.03 sec
+multiplicity <S^2> = 0.75  2S+1 = 2
+E1 = -0.4999996243389742  Ecoul = 4.6494517655478135e-17
+macro= 1  E= -0.499999624338974  delta_E= -0.000781965  |g|= 0.0206146  1 KF 3 JK
+    CPU time for cycle= 2      0.01 sec, wall time      0.03 sec
+    |g|= 4.24e-05 (keyframe), |g-correction|= 4.13e-05
+    imic 1(1)  |g|= 4.26e-05  |dxi|= 6.06e-07  max(|x|)= 5.99e-07  |dr|= 6.06e-07  eig= -7.44e-13  seig= 2.11e-07
+    imic 2(2)  |g|= 2.42e-06  |dxi|= 8.3e-05  max(|x|)= 8.27e-05  |dr|= 8.31e-05  eig= -3.44e-09  seig= 2.65e-09
+    tot inner=2  3 JK  |g|= 2.42e-06  |u-1|= 8.31e-05
+    CPU time for aug_hess in 2 inner iters      0.01 sec, wall time      0.04 sec
+multiplicity <S^2> = 0.75  2S+1 = 2
+E1 = -0.4999996277805832  Ecoul = 9.507243052789424e-18
+macro= 2  E= -0.499999627780583  delta_E= -3.44161e-09  |g|= 4.24418e-05  1 KF 3 JK
+    CPU time for cycle= 3      0.01 sec, wall time      0.04 sec
+    |g|= 2.42e-06 (keyframe), |g-correction|= 3.81e-13
+    imic 1(1)  |g|= 2.42e-06  |dxi|= 1.91e-13  max(|x|)= 1.9e-13  |dr|= 1.91e-13  eig= -1.82e-26  seig= 6.88e-09
+    tot inner=1  2 JK  |g|= 2.42e-06  |u-1|= 1.91e-13
+    CPU time for aug_hess in 1 inner iters      0.01 sec, wall time      0.02 sec
+multiplicity <S^2> = 0.75  2S+1 = 2
+E1 = -0.4999996277805833  Ecoul = 9.70372736090819e-18
+macro= 3  E= -0.499999627780583  delta_E= -1.11022e-16  |g|= 2.42236e-06  1 KF 2 JK
+    CPU time for cycle= 4      0.01 sec, wall time      0.02 sec
+Canonicalize SCF orbitals
+macro X = 4  E=-0.499999627780583  |g|= 2.42236e-06  total 6 KF 18 JK
+    CPU time for Second order SCF      0.04 sec, wall time      0.25 sec
+converged SCF energy = -0.499999627780583  <S^2> = 0.75  2S+1 = 2
+**** SCF Summaries ****
+Total Energy =                          -0.499999627780583
+Nuclear Repulsion Energy =               0.000000000000000
+One-electron Energy =                   -0.499999627780583
+Two-electron Energy =                    0.000000000000000
+**** MO energy ****
+                             alpha | beta                alpha | beta
+MO #1   energy= -0.499999627780583 | 0.0503611870098597 occ= 1 | 0
+MO #2   energy= 0.296747811543098  | 0.433816868376448  occ= 0 | 0
+MO #3   energy= 0.75010002592617   | 0.849134794353842  occ= 0 | 0
+MO #4   energy= 0.750100074206156  | 0.84913482935784   occ= 0 | 0
+MO #5   energy= 0.750100111486149  | 0.849134874690299  occ= 0 | 0
+MO #6   energy= 2.13529796233123   | 2.27160285106131   occ= 0 | 0
+MO #7   energy= 3.45868895860249   | 3.51535436814434   occ= 0 | 0
+MO #8   energy= 3.45868895860343   | 3.51535437285324   occ= 0 | 0
+MO #9   energy= 3.45868895860343   | 3.51535441905567   occ= 0 | 0
+MO #10  energy= 3.45868895860344   | 3.51535445473143   occ= 0 | 0
+MO #11  energy= 3.45868895860345   | 3.51535446294923   occ= 0 | 0
+MO #12  energy= 3.97177482202103   | 4.05923910744481   occ= 0 | 0
+MO #13  energy= 3.97177484014577   | 4.05923915085856   occ= 0 | 0
+MO #14  energy= 3.97177485414069   | 4.0592392070822    occ= 0 | 0
+ ** MO coefficients (expansion on meta-Lowdin AOs) for alpha spin **
+               #1        #2        #3        #4        #5       
+  0 H 1s       0.99724  -0.05679   0.00000   0.00000  -0.00000
+  0 H 2s       0.05817   0.99791  -0.00000  -0.00000  -0.00000
+  0 H 3s       0.04613  -0.03079   0.00000   0.00000   0.00000
+  0 H 2px      0.00000  -0.00000  -0.63918  -0.69676  -0.28720
+  0 H 2py      0.00000   0.00000   0.70483  -0.68598   0.09559
+  0 H 2pz      0.00000  -0.00000  -0.26677  -0.14302   0.94068
+  0 H 3px      0.00000   0.00000   0.09915   0.10809   0.04455
+  0 H 3py     -0.00000   0.00000  -0.10934   0.10642  -0.01483
+  0 H 3pz     -0.00000   0.00000   0.04138   0.02219  -0.14593
+  0 H 3dxy    -0.00000   0.00000  -0.00000   0.00000  -0.00000
+  0 H 3dyz    -0.00000   0.00000  -0.00000   0.00000  -0.00000
+  0 H 3dz^2   -0.00000   0.00000  -0.00000  -0.00000  -0.00000
+  0 H 3dxz     0.00000  -0.00000   0.00000   0.00000  -0.00000
+ 0 H 3dx2-y2  -0.00000   0.00000   0.00000   0.00000   0.00000
+               #6        #7        #8        #9        #10      
+  0 H 1s       0.04782  -0.00000   0.00000  -0.00000  -0.00000
+  0 H 2s      -0.02808  -0.00000   0.00000  -0.00000  -0.00000
+  0 H 3s      -0.99846   0.00000  -0.00000   0.00000   0.00000
+  0 H 2px     -0.00000   0.00000   0.00000   0.00000   0.00000
+  0 H 2py      0.00000  -0.00000   0.00000   0.00000   0.00000
+  0 H 2pz      0.00000   0.00000  -0.00000   0.00000   0.00000
+  0 H 3px     -0.00000  -0.00000   0.00000   0.00000  -0.00000
+  0 H 3py     -0.00000   0.00000   0.00000  -0.00000   0.00000
+  0 H 3pz     -0.00000   0.00000   0.00000   0.00000   0.00000
+  0 H 3dxy    -0.00000  -0.49826  -0.59656   0.52977   0.16654
+  0 H 3dyz    -0.00000  -0.29382  -0.43592  -0.37913   0.10489
+  0 H 3dz^2   -0.00000  -0.68384   0.22058  -0.54171  -0.21077
+  0 H 3dxz     0.00000   0.43681  -0.57683  -0.51975   0.11236
+ 0 H 3dx2-y2  -0.00000  -0.08352   0.26961  -0.10962   0.95090
+               #11       #12       #13       #14      
+  0 H 1s       0.00000  -0.00000   0.00000  -0.00000
+  0 H 2s       0.00000  -0.00000   0.00000  -0.00000
+  0 H 3s      -0.00000  -0.00000  -0.00000   0.00000
+  0 H 2px      0.00000   0.09915   0.10809   0.04455
+  0 H 2py     -0.00000  -0.10934   0.10642  -0.01483
+  0 H 2pz     -0.00000   0.04138   0.02219  -0.14593
+  0 H 3px      0.00000   0.63918   0.69676   0.28720
+  0 H 3py     -0.00000  -0.70483   0.68598  -0.09558
+  0 H 3pz      0.00000   0.26676   0.14303  -0.94068
+  0 H 3dxy    -0.29575  -0.00000   0.00000   0.00000
+  0 H 3dyz     0.75426  -0.00000   0.00000  -0.00000
+  0 H 3dz^2   -0.38188   0.00000  -0.00000  -0.00000
+  0 H 3dxz    -0.44011   0.00000   0.00000  -0.00000
+ 0 H 3dx2-y2  -0.06405   0.00000   0.00000   0.00000
+ ** MO coefficients (expansion on meta-Lowdin AOs) for beta spin **
+               #1        #2        #3        #4        #5       
+  0 H 1s       0.87729   0.46844  -0.00000   0.00000   0.00000
+  0 H 2s       0.47608  -0.87694  -0.00000  -0.00000  -0.00000
+  0 H 3s       0.06087   0.10740   0.00000  -0.00000   0.00000
+  0 H 2px     -0.00000  -0.00000   0.28652   0.69511   0.63766
+  0 H 2py     -0.00000   0.00000  -0.09536   0.68436  -0.70317
+  0 H 2pz     -0.00000  -0.00000  -0.93846   0.14268   0.26614
+  0 H 3px      0.00000   0.00000  -0.04873  -0.11823  -0.10845
+  0 H 3py      0.00000   0.00000   0.01622  -0.11640   0.11960
+  0 H 3pz      0.00000   0.00000   0.15961  -0.02427  -0.04526
+  0 H 3dxy     0.00000   0.00000   0.00000  -0.00000   0.00000
+  0 H 3dyz     0.00000   0.00000   0.00000  -0.00000   0.00000
+  0 H 3dz^2    0.00000   0.00000   0.00000   0.00000  -0.00000
+  0 H 3dxz    -0.00000  -0.00000   0.00000  -0.00000  -0.00000
+ 0 H 3dx2-y2   0.00000   0.00000  -0.00000  -0.00000  -0.00000
+               #6        #7        #8        #9        #10      
+  0 H 1s      -0.10451  -0.00000   0.00000  -0.00000  -0.00000
+  0 H 2s       0.06571   0.00000   0.00000   0.00000   0.00000
+  0 H 3s       0.99235  -0.00000   0.00000  -0.00000   0.00000
+  0 H 2px      0.00000  -0.00000   0.00000   0.00000   0.00000
+  0 H 2py      0.00000  -0.00000   0.00000  -0.00000  -0.00000
+  0 H 2pz      0.00000   0.00000   0.00000   0.00000   0.00000
+  0 H 3px      0.00000  -0.00000   0.00000   0.00000  -0.00000
+  0 H 3py     -0.00000  -0.00000   0.00000  -0.00000  -0.00000
+  0 H 3pz     -0.00000   0.00000   0.00000  -0.00000  -0.00000
+  0 H 3dxy     0.00000  -0.32647  -0.13355   0.26986  -0.05390
+  0 H 3dyz     0.00000   0.06616   0.67482  -0.65286   0.08417
+  0 H 3dz^2    0.00000   0.83442   0.23862   0.44511   0.06767
+  0 H 3dxz    -0.00000  -0.43658   0.62914   0.53727   0.28396
+ 0 H 3dx2-y2   0.00000   0.04661  -0.27207  -0.11899   0.95121
+               #11       #12       #13       #14      
+  0 H 1s      -0.00000  -0.00000   0.00000   0.00000
+  0 H 2s       0.00000   0.00000   0.00000  -0.00000
+  0 H 3s      -0.00000   0.00000   0.00000  -0.00000
+  0 H 2px      0.00000  -0.04873  -0.11823   0.10845
+  0 H 2py      0.00000   0.01622  -0.11640  -0.11960
+  0 H 2pz      0.00000   0.15961  -0.02427   0.04526
+  0 H 3px      0.00000  -0.28652  -0.69511   0.63766
+  0 H 3py     -0.00000   0.09536  -0.68436  -0.70317
+  0 H 3pz      0.00000   0.93846  -0.14268   0.26614
+  0 H 3dxy     0.89434   0.00000  -0.00000  -0.00000
+  0 H 3dyz     0.32699  -0.00000   0.00000   0.00000
+  0 H 3dz^2    0.21000  -0.00000   0.00000  -0.00000
+  0 H 3dxz    -0.21043   0.00000   0.00000  -0.00000
+ 0 H 3dx2-y2   0.06962  -0.00000  -0.00000   0.00000
+
+To work with the spin densities directly, `use mulliken_meta_spin()` only printing them here.
+
+ ** Mulliken spin pop alpha/beta on meta-lowdin orthogonal AOs **
+ ** Mulliken Spin Density (per AO)  **
+spin_pop of  0 H 1s        0.99449
+spin_pop of  0 H 2s        0.00338
+spin_pop of  0 H 3s        0.00213
+spin_pop of  0 H 2px       0.00000
+spin_pop of  0 H 2py       0.00000
+spin_pop of  0 H 2pz       0.00000
+spin_pop of  0 H 3px       0.00000
+spin_pop of  0 H 3py       0.00000
+spin_pop of  0 H 3pz       0.00000
+spin_pop of  0 H 3dxy      0.00000
+spin_pop of  0 H 3dyz      0.00000
+spin_pop of  0 H 3dz^2     0.00000
+spin_pop of  0 H 3dxz      0.00000
+spin_pop of  0 H 3dx2-y2    0.00000
+ ** Mulliken Spin Density (per atom)  **
+spin density of  0 H =      1.00000
+ ** Mulliken pop alpha/beta on meta-lowdin orthogonal AOs **
+ ** Mulliken pop       alpha | beta **
+pop of  0 H 1s        0.99449 | 0.00000   
+pop of  0 H 2s        0.00338 | 0.00000   
+pop of  0 H 3s        0.00213 | 0.00000   
+pop of  0 H 2px       0.00000 | 0.00000   
+pop of  0 H 2py       0.00000 | 0.00000   
+pop of  0 H 2pz       0.00000 | 0.00000   
+pop of  0 H 3px       0.00000 | 0.00000   
+pop of  0 H 3py       0.00000 | 0.00000   
+pop of  0 H 3pz       0.00000 | 0.00000   
+pop of  0 H 3dxy      0.00000 | 0.00000   
+pop of  0 H 3dyz      0.00000 | 0.00000   
+pop of  0 H 3dz^2     0.00000 | 0.00000   
+pop of  0 H 3dxz      0.00000 | 0.00000   
+pop of  0 H 3dx2-y2    0.00000 | 0.00000   
+In total             1.00000 | 0.00000   
+ ** Mulliken atomic charges   ( Nelec_alpha | Nelec_beta ) **
+charge of  0H =     -0.00000  (     1.00000      0.00000 )
+Dipole moment(X, Y, Z, Debye): -0.00000, -0.00000, -0.00000
+Converting <class 'pyscf.soscf.newton_ah.newton.<locals>.SecondOrderUHF'> to UHF
+
+******** <class 'pyscf.cc.uccsd.UCCSD'> ********
+CC2 = 0
+CCSD nocc = (1, 0), nmo = (14, 14)
+max_cycle = 50
+direct = 0
+conv_tol = 1e-07
+conv_tol_normt = 1e-06
+diis_space = 6
+diis_start_cycle = 0
+diis_start_energy_diff = 1e+09
+max_memory 4000 MB (current use 71 MB)
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+E1 = -0.4999996277805833  Ecoul = 9.70372736090819e-18
+Init t2, MP2 energy = -1.37344998144635e-33
+    CPU time for init mp2      0.00 sec, wall time      0.00 sec
+Init E_corr(CCSD) = -1.48662485170651e-12
+cycle = 1  E_corr(CCSD) = -1.72206890830092e-12  dE = -2.35444057e-13  norm(t1,t2) = 1.27148e-07
+    CPU time for CCSD iter      0.01 sec, wall time      0.01 sec
+    CPU time for CCSD      0.01 sec, wall time      0.01 sec
+UCCSD converged
+E(UCCSD) = -0.4999996277823054  E_corr = -1.722068908300924e-12
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+
+CCSD correlation energy:  -1.7220689083009242e-12
+E1 = -0.4999996277805833  Ecoul = 9.70372736090819e-18
+CCSD total energy:  -0.4999996277823054

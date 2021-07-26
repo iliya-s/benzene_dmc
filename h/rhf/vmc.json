@@ -1,0 +1,50 @@
+{
+  "wavefunction":
+  {
+    "name": "jastrowslater",
+    "hfType": "rhf",
+    "complex": false,
+    "fourBodyJastrow": "asAB2",
+    "noENCusp": true,
+    "QmaxEEN": 0,
+    "Qmax": 6
+  },
+  "realspace":
+  {
+    "basis": "gto",
+    "nalpha": 1,
+    "nbeta": 0,
+    "norbs": 5
+  },
+  "sampling":
+  {
+    "rStepType": "spherical",
+    "sampleEveryRt": false,
+    "stochasticIter": 5e4,
+    "seed": 1
+  },
+  "optimizer":
+  {
+    "fullrestart": true,
+    "optimizeorbs": true,
+    "optimizecicoeffs": false,
+    "optimizecps": true,
+    "method": "lm",
+    "direct": true,
+    "hDiagShift": 0.1,
+    "sDiagShift": 0.0,
+    "decay": 0.1,
+    "cgTol": 1.0e-3,
+    "cgIter": 35,
+    "dTol": 1.0e-3,
+    "stepsizes": [0.0, 0.01, 0.1, 1.0],
+    "corrSampleFrac": 0.3,
+    "sgdIter": 0,
+    "maxIter": 15
+  },
+  "print":
+  {
+    "vars": true,
+    "grad": false
+  }
+}

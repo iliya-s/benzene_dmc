@@ -1,0 +1,33 @@
+{
+  "wavefunction":
+  {
+    "name": "jastrowslater",
+    "hfType": "ghf",
+    "complex": false,
+    "fourBodyJastrow": "asAB2",
+    "noENCusp": true,
+    "QmaxEEN": 0,
+    "Qmax": 6
+  },
+  "realspace":
+  {
+    "basis": "gto",
+    "nalpha": 3,
+    "nbeta": 1,
+    "norbs": 13
+  },
+  "sampling":
+  {
+    "rStepType": "spherical",
+    "stochasticIter": 1e5,
+    "seed": 1,
+    "tau": 0.01,
+    "nwalk": 50,
+    "ngeneration": 5000,
+    "maxIter": 50000
+  },
+  "print":
+  {
+    "vars": true
+  }
+}

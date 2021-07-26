@@ -1,0 +1,135 @@
+User:
+ilsa8974
+Hostname:
+bnode0302.rc.int.colorado.edu
+CPU info:
+Architecture:          x86_64
+CPU op-mode(s):        32-bit, 64-bit
+Byte Order:            Little Endian
+CPU(s):                28
+On-line CPU(s) list:   0-27
+Thread(s) per core:    1
+Core(s) per socket:    14
+Socket(s):             2
+NUMA node(s):          2
+Vendor ID:             GenuineIntel
+CPU family:            6
+Model:                 79
+Model name:            Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz
+Stepping:              1
+CPU MHz:               2899.968
+Computation started at:
+Mon May 24 17:32:44 MDT 2021
+git commit: b183b861ee989460d41d142fe4edef4eeec4e5b7, branch: merged, compiled at: Thu May 13 17:11:20 MDT 2021
+
+nproc used: 28 (NB: stochasticIter below is per proc)
+
+**************************************************************
+Input file  :
+**************************************************************
+{
+    "wavefunction": {
+        "name": "jastrowslater",
+        "hfType": "rhf",
+        "complex": "false",
+        "fourBodyJastrow": "asAB2",
+        "noENCusp": "true",
+        "QmaxEEN": "0",
+        "Qmax": "6"
+    },
+    "realspace": {
+        "basis": "gto",
+        "nalpha": "1",
+        "nbeta": "0",
+        "norbs": "5"
+    },
+    "sampling": {
+        "rStepType": "spherical",
+        "sampleEveryRt": "false",
+        "stochasticIter": "5e4",
+        "seed": "1"
+    },
+    "optimizer": {
+        "fullrestart": "true",
+        "optimizeorbs": "true",
+        "optimizecicoeffs": "false",
+        "optimizecps": "true",
+        "method": "lm",
+        "direct": "true",
+        "hDiagShift": "0.1",
+        "sDiagShift": "0.0",
+        "decay": "0.1",
+        "cgTol": "1.0e-3",
+        "cgIter": "35",
+        "dTol": "1.0e-3",
+        "stepsizes": [
+            "0.0",
+            "0.01",
+            "0.1",
+            "1.0"
+        ],
+        "corrSampleFrac": "0.3",
+        "sgdIter": "0",
+        "maxIter": "15"
+    },
+    "print": {
+        "vars": "true",
+        "grad": "false"
+    }
+}
+
+Number of Jastrow vars: 23
+Number of Reference vars: 11
+Number of Optimized vars: 34
+    0    -0.50000031 (3.64e-06)     0.00000463      1.2      0.9     1.71     1.76     2.41 
+    1    -0.49999609 (3.62e-06)     0.00000249      1.2      0.9     4.07     4.11     4.77 
+    2    -0.49999735 (3.49e-06)     0.00000285      1.2      0.9     6.41     6.45     7.10 
+    3    -0.50000013 (3.51e-06)     0.00000391      1.2      0.9     8.75     8.80     9.44 
+    4    -0.50000014 (3.57e-06)     0.00000384      1.2      0.9    11.09    11.13    11.80 
+    5    -0.50000340 (3.73e-06)     0.00000579      1.3      0.9    13.44    13.49    14.13 
+    6    -0.50000216 (3.66e-06)     0.00000632      1.3      0.9    15.80    15.84    16.49 
+    7    -0.49999514 (3.48e-06)     0.00000526      1.2      0.9    18.15    18.19    18.85 
+    8    -0.50000022 (3.47e-06)     0.00000464      1.2      0.9    20.49    20.53    21.18 
+    9    -0.49999921 (3.60e-06)     0.00000469      1.2      0.9    22.84    22.88    23.53 
+   10    -0.50000253 (3.58e-06)     0.00000380      1.2      0.9    25.21    25.26    25.91 
+   11    -0.49999847 (3.54e-06)     0.00000403      1.2      0.9    27.58    27.62    28.27 
+   12    -0.49999538 (3.50e-06)     0.00000500      1.2      0.9    29.92    29.96    30.61 
+   13    -0.50000021 (3.59e-06)     0.00000408      1.2      0.9    32.27    32.32    32.97 
+   14    -0.49999701 (3.54e-06)     0.00000464      1.2      0.9    34.65    34.70    35.34 
+
+__rJastrow parameters__
+
+EEsameSpin
+0.25 0 0 0 0 0 
+
+EEoppositeSpin
+0.5 0 0 0 0 0 
+
+EN
+1 | 0 0 0 0 0 0 
+
+EENsameSpin
+1 | 
+
+EENoppositeSpin
+1 | 
+
+EENNlinear
+0 0 
+EENNquadratic
+0 0 
+0 0 
+
+rJastrow.txt
+0.25  0  0  0  0  0  0.5  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  
+
+CI-expansion
+  1
+
+DeterminantA
+  (0.9999989836,0)  (-2.444656402,0)  (3.259011841e-06,0)  (1.531633082e-10,0)  (-9.860011747e-11,0)
+  (1.098174262e-06,0)  (2.641276754,0)  (-9.397939956e-07,0)  (-4.416736689e-11,0)  (2.843309305e-11,0)
+  (1.530167294e-06,0)  (-2.278822406e-07,0)  (-0.6404719742,0)  (-0.17894774,0)  (-0.7468422569,0)
+  (1.831402666e-06,0)  (-2.727441271e-07,0)  (-0.7665325186,0)  (0.2086655813,0)  (0.6073603322,0)
+  (-1.127880363e-07,0)  (1.679711135e-08,0)  (0.04715451485,0)  (0.9614761471,0)  (-0.2708137187,0)
+

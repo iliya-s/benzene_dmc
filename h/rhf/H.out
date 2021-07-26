@@ -1,0 +1,263 @@
+#INFO: **** input file is /projects/ilsa8974/experiments/VMCr/papers/jpghf_realspace/benzene/rhf/H/H.py ****
+import json
+import numpy as np
+from pyscf import lib, gto, scf, ao2mo, tools, fci, mcscf
+from pyscf.shciscf import shci, settings
+
+atomstring = f"H 0 0 0;"
+
+mol = gto.M(
+atom = atomstring,
+unit = "bohr",
+cart = False,
+basis = {
+'H':gto.basis.parse(
+'''
+H S
+23.843185  0.00411490
+10.212443  0.01046440
+4.374164  0.02801110
+1.873529  0.07588620
+0.802465  0.18210620
+0.343709  0.34852140
+0.147217  0.37823130
+0.063055  0.11642410
+H S
+0.139013  1.00000000
+H P
+0.740212  1.00000000
+'''
+)
+},
+ecp = {
+'H':gto.basis.parse_ecp(
+'''
+H nelec 0
+H ul
+1 21.24359 1.00000
+3 21.24359 21.24359
+2 21.77696 -10.85192
+H S
+2 1.00000 0.00000
+'''
+)
+},
+spin = 1,
+verbose = 5
+)
+
+gto.write_gto(mol)
+gto.write_pp(mol)
+
+#RHF
+mf = scf.RHF(mol).newton()
+norbs = mol.nao
+
+dm = mf.get_init_guess()
+
+##uncomment to use current another set of orbitals as guess for density matrix
+#mo_occ = np.zeros(norbs)
+#nocc = mf.mol.nelectron // 2
+#mo_occ[:nocc] = 2
+#mo_coeff = np.zeros((norbs, norbs))
+#
+#f = open("hf.txt", 'r')
+#row = 0
+#for line in f:
+#    col = 0
+#    for coeff in line.split():
+#        mo_coeff[row, col]  = float(coeff)
+#        col = col + 1
+#    row = row + 1
+#f.close()
+#dm = mf.make_rdm1(mo_coeff, mo_occ)
+
+dm = dm + (2.0 * np.random.rand(norbs, norbs) - 1.0) / 1000
+mf.max_cycle = 100
+mf.kernel(dm0 = dm)
+mf.analyze()
+
+asAO = mol.search_ao_label(["H 1s"])
+f = open("asAO.txt", 'w')
+for i in range(len(asAO)):
+    f.write(f'{asAO[i]}\t')
+
+fileHF = open("hf.txt", 'w')
+for i in range(norbs):
+    for j in range(norbs):
+        fileHF.write('%16.10e '%(mf.mo_coeff[i,j]))
+    fileHF.write('\n')
+#INFO: ******************** input file end ********************
+
+
+System: uname_result(system='Linux', node='bnode0303.rc.int.colorado.edu', release='3.10.0-693.37.4.el7.x86_64', version='#1 SMP Fri Aug 10 12:34:55 EDT 2018', machine='x86_64', processor='x86_64')  Threads 1
+Python 3.7.3 (default, Mar 27 2019, 22:11:17) 
+[GCC 7.3.0]
+numpy 1.16.4  scipy 1.3.0
+Date: Mon May 24 17:16:31 2021
+PySCF version 1.7.5
+PySCF path  /projects/ilsa8974/apps/pyscf/pyscf
+GIT HEAD      ref: refs/heads/master
+GIT master branch  7a57d2f37184ea4cd3b52a590c945197b084f66d
+
+[CONFIG] conf_file None
+[INPUT] verbose = 5
+[INPUT] max_memory = 4000 
+[INPUT] num. atoms = 1
+[INPUT] num. electrons = 1
+[INPUT] charge = 0
+[INPUT] spin (= nelec alpha-beta = 2S) = 1
+[INPUT] symmetry False subgroup None
+[INPUT] Mole.unit = bohr
+[INPUT]  1 H      0.000000000000   0.000000000000   0.000000000000 AA    0.000000000000   0.000000000000   0.000000000000 Bohr
+[INPUT] ---------------- BASIS SET ---------------- 
+[INPUT] l, kappa, [nprim/nctr], expnt,             c_1 c_2 ...
+[INPUT] H
+[INPUT] 0    0    [8    /1   ]  23.843185         0.0041149
+                                10.212443         0.0104644
+                                4.374164          0.0280111
+                                1.873529          0.0758862
+                                0.802465          0.1821062
+                                0.343709          0.3485214
+                                0.147217          0.3782313
+                                0.063055          0.1164241
+[INPUT] 0    0    [1    /1   ]  0.139013             1
+[INPUT] 1    0    [1    /1   ]  0.740212             1
+
+nuclear repulsion = 0
+number of shells = 3
+number of NR pGTOs = 12
+number of NR cGTOs = 5
+basis = {'H': [[0, [23.843185, 0.0041149], [10.212443, 0.0104644], [4.374164, 0.0280111], [1.873529, 0.0758862], [0.802465, 0.1821062], [0.343709, 0.3485214], [0.147217, 0.3782313], [0.063055, 0.1164241]], [0, [0.139013, 1.0]], [1, [0.740212, 1.0]]]}
+ecp = {'H': [0, [[-1, [[], [[21.24359, 1.0]], [[21.77696, -10.85192]], [[21.24359, 21.24359]], [], [], []]], [0, [[], [], [[1.0, 0.0]], [], [], [], []]]]]}
+CPU time:         0.35
+
+
+
+
+******** <class 'pyscf.scf.rohf.HF1e'> ********
+method = HF1e-ROHF-RHF
+initial guess = minao
+damping factor = 0
+level_shift factor = 0
+DIIS = <class 'pyscf.scf.diis.CDIIS'>
+diis_start_cycle = 1
+diis_space = 8
+SCF conv_tol = 1e-09
+SCF conv_tol_grad = None
+SCF max_cycles = 50
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = /rc_scratch/ilsa8974/tmpldvibs9y
+max_memory 4000 MB (current use 64 MB)
+num. doubly occ = 0  num. singly occ = 1
+******** <class 'pyscf.scf.rohf.HF1e'> Newton solver flags ********
+SCF tol = 1e-09
+conv_tol_grad = None
+max. SCF cycles = 100
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = /rc_scratch/ilsa8974/tmpldvibs9y
+max_cycle_inner = 12
+max_stepsize = 0.05
+ah_start_tol = 1e+09
+ah_level_shift = 0
+ah_conv_tol = 1e-12
+ah_lindep = 1e-14
+ah_start_cycle = 1
+ah_max_cycle = 40
+ah_grad_trust_region = 2.5
+kf_interval = 4
+kf_trust_region = 5
+canonicalization = True
+max_memory 4000 MB (current use 64 MB)
+Set conv_tol_grad to 3.16228e-05
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+E1 = -0.493815435756751  Ecoul = -1.1962043119423969e-17
+Initial guess E= -0.493815435756751  |g|= 0.069691
+    CPU time for initializing second order scf      0.01 sec, wall time      0.09 sec
+    |g|= 0.0697 (keyframe)
+    imic 1(1)  |g|= 0.0307  |dxi|= 0.05  max(|x|)= 0.0887  |dr|= 0.05  eig= -0.00618  seig= 0.00486
+    imic 2(2)  |g|= 4.77e-05  |dxi|= 0.0394  max(|x|)= 0.0394  |dr|= 0.0894  eig= -0.00121  seig= 3.99e-08
+    imic 3(3)  |g|= 1.78e-13  |dxi|= 6.12e-05  max(|x|)= 6.12e-05  |dr|= 0.0894  eig= -2.92e-09  seig= 3.51e-21
+    tot inner=3  4 JK  |g|= 1.78e-13  |u-1|= 0.0894
+    CPU time for aug_hess in 3 inner iters      0.00 sec, wall time      0.00 sec
+Overlap to initial guess, SVD = [0.99600273]
+Overlap to last step, SVD = [0.99600273]
+E1 = -0.49999893411258506  Ecoul = -2.5582784052456388e-17
+macro= 0  E= -0.499998934112585  delta_E= -0.0061835  |g|= 0.069691  1 KF 4 JK
+    CPU time for cycle= 1      0.01 sec, wall time      0.01 sec
+    |g|= 0.000741 (keyframe), |g-correction|= 0.000741
+    imic 1(1)  |g|= 3.43e-06  |dxi|= 0.000936  max(|x|)= 0.000936  |dr|= 0.000936  eig= -6.94e-07  seig= 3.74e-09
+    tot inner=1  2 JK  |g|= 3.43e-06  |u-1|= 0.000936
+    CPU time for aug_hess in 1 inner iters      0.01 sec, wall time      0.05 sec
+Overlap to initial guess, SVD = [0.99608591]
+Overlap to last step, SVD = []
+E1 = -0.4999996277565954  Ecoul = -7.492693072343748e-17
+macro= 1  E= -0.499999627756595  delta_E= -6.93644e-07  |g|= 0.00074098  1 KF 2 JK
+    CPU time for cycle= 2      0.01 sec, wall time      0.05 sec
+    |g|= 3.43e-06 (keyframe), |g-correction|= 8.66e-10
+    imic 1(1)  |g|= 3.43e-06  |dxi|= 2.73e-10  max(|x|)= 2.73e-10  |dr|= 2.73e-10  eig= -5.92e-20  seig= 8.76e-07
+    tot inner=1  2 JK  |g|= 3.43e-06  |u-1|= 2.73e-10
+    CPU time for aug_hess in 1 inner iters      0.01 sec, wall time      0.02 sec
+Overlap to initial guess, SVD = [0.99608591]
+Overlap to last step, SVD = []
+E1 = -0.49999962775659545  Ecoul = -8.280215575023177e-17
+macro= 2  E= -0.499999627756596  delta_E= -5.55112e-17  |g|= 3.42918e-06  1 KF 2 JK
+    CPU time for cycle= 3      0.01 sec, wall time      0.02 sec
+Canonicalize SCF orbitals
+macro X = 3  E=-0.499999627756596  |g|= 3.42918e-06  total 4 KF 12 JK
+    CPU time for Second order SCF      0.03 sec, wall time      0.20 sec
+converged SCF energy = -0.499999627756596
+**** SCF Summaries ****
+Total Energy =                          -0.499999627756596
+Nuclear Repulsion Energy =               0.000000000000000
+One-electron Energy =                   -0.499999627756595
+Two-electron Energy =                   -0.000000000000000
+**** MO energy ****
+                Roothaan           | alpha              | beta
+MO #1   energy= -0.187507705369568 | -0.499999627756596 | 0.124984217017458  occ= 1
+MO #2   energy= 0.780075455722739  | 0.710173279186118  | 0.84997763225936   occ= 0
+MO #3   energy= 1.5359002556279    | 1.47043095853592   | 1.60136955271989   occ= 0
+MO #4   energy= 1.53590025563766   | 1.47043095854461   | 1.60136955273071   occ= 0
+MO #5   energy= 1.53590025563766   | 1.47043095854461   | 1.60136955273071   occ= 0
+ ** MO coefficients (expansion on meta-Lowdin AOs) **
+               #1        #2        #3        #4        #5       
+  0 H 1s       0.99730  -0.07337   0.00000   0.00000  -0.00000
+  0 H 2s       0.07337   0.99730  -0.00000  -0.00000   0.00000
+  0 H 2px      0.00000  -0.00000  -0.64047  -0.17895  -0.74684
+  0 H 2py      0.00000  -0.00000  -0.76653   0.20867   0.60736
+  0 H 2pz     -0.00000   0.00000   0.04715   0.96148  -0.27081
+ ** Mulliken pop on meta-lowdin orthogonal AOs  **
+ ** Mulliken pop  **
+pop of  0 H 1s        0.99462
+pop of  0 H 2s        0.00538
+pop of  0 H 2px       0.00000
+pop of  0 H 2py       0.00000
+pop of  0 H 2pz       0.00000
+ ** Mulliken atomic charges  **
+charge of  0H =     -0.00000
+Dipole moment(X, Y, Z, Debye): -0.00001, -0.00001,  0.00000

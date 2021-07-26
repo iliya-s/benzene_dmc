@@ -1,0 +1,354 @@
+#INFO: **** input file is /projects/ilsa8974/experiments/VMCr/papers/jpghf_realspace/benzene/cc/pp/dz/H/H.py ****
+import json
+import numpy as np
+from pyscf import lib, gto, scf, ao2mo, tools, fci, mcscf, cc
+from pyscf.shciscf import shci, settings
+
+atomstring = ""
+atomstring += f"H 0 0 0;"
+
+mol = gto.M(
+atom = atomstring,
+unit = "bohr",
+cart = False,
+basis = {
+'H':gto.basis.parse(
+'''
+H S
+23.843185  0.00411490
+10.212443  0.01046440
+4.374164  0.02801110
+1.873529  0.07588620
+0.802465  0.18210620
+0.343709  0.34852140
+0.147217  0.37823130
+0.063055  0.11642410
+H S
+0.139013  1.00000000
+H P
+0.740212  1.00000000
+'''
+)
+},
+ecp = {
+'H':gto.basis.parse_ecp(
+'''
+H nelec 0
+H ul
+1 21.24359 1.00000
+3 21.24359 21.24359
+2 21.77696 -10.85192
+H S
+2 1.00000 0.00000
+'''
+)
+},
+spin = 1,
+verbose = 5
+)
+mf = scf.UHF(mol).newton()
+norbs = mol.nao
+
+dm = mf.get_init_guess()
+
+dm = dm + (2.0 * np.random.rand(norbs, norbs) - 1.0) / 1000
+mf.max_cycle = 100
+mf.kernel(dm0 = dm)
+mf.analyze()
+
+mycc = mf.CCSD()
+mycc.run()
+print("\n")
+print('CCSD correlation energy: ', mycc.e_corr)
+print('CCSD total energy: ', mf.energy_tot() + mycc.e_corr)
+#INFO: ******************** input file end ********************
+
+
+System: uname_result(system='Linux', node='bnode0303.rc.int.colorado.edu', release='3.10.0-693.37.4.el7.x86_64', version='#1 SMP Fri Aug 10 12:34:55 EDT 2018', machine='x86_64', processor='x86_64')  Threads 1
+Python 3.7.3 (default, Mar 27 2019, 22:11:17) 
+[GCC 7.3.0]
+numpy 1.16.4  scipy 1.3.0
+Date: Wed Jun  9 16:26:18 2021
+PySCF version 1.7.5
+PySCF path  /projects/ilsa8974/apps/pyscf/pyscf
+GIT HEAD      ref: refs/heads/master
+GIT master branch  7a57d2f37184ea4cd3b52a590c945197b084f66d
+
+[CONFIG] conf_file None
+[INPUT] verbose = 5
+[INPUT] max_memory = 4000 
+[INPUT] num. atoms = 1
+[INPUT] num. electrons = 1
+[INPUT] charge = 0
+[INPUT] spin (= nelec alpha-beta = 2S) = 1
+[INPUT] symmetry False subgroup None
+[INPUT] Mole.unit = bohr
+[INPUT]  1 H      0.000000000000   0.000000000000   0.000000000000 AA    0.000000000000   0.000000000000   0.000000000000 Bohr
+[INPUT] ---------------- BASIS SET ---------------- 
+[INPUT] l, kappa, [nprim/nctr], expnt,             c_1 c_2 ...
+[INPUT] H
+[INPUT] 0    0    [8    /1   ]  23.843185         0.0041149
+                                10.212443         0.0104644
+                                4.374164          0.0280111
+                                1.873529          0.0758862
+                                0.802465          0.1821062
+                                0.343709          0.3485214
+                                0.147217          0.3782313
+                                0.063055          0.1164241
+[INPUT] 0    0    [1    /1   ]  0.139013             1
+[INPUT] 1    0    [1    /1   ]  0.740212             1
+
+nuclear repulsion = 0
+number of shells = 3
+number of NR pGTOs = 12
+number of NR cGTOs = 5
+basis = {'H': [[0, [23.843185, 0.0041149], [10.212443, 0.0104644], [4.374164, 0.0280111], [1.873529, 0.0758862], [0.802465, 0.1821062], [0.343709, 0.3485214], [0.147217, 0.3782313], [0.063055, 0.1164241]], [0, [0.139013, 1.0]], [1, [0.740212, 1.0]]]}
+ecp = {'H': [0, [[-1, [[], [[21.24359, 1.0]], [[21.77696, -10.85192]], [[21.24359, 21.24359]], [], [], []]], [0, [[], [], [[1.0, 0.0]], [], [], [], []]]]]}
+CPU time:         0.34
+
+
+
+
+******** <class 'pyscf.scf.uhf.HF1e'> ********
+method = HF1e-UHF
+initial guess = minao
+damping factor = 0
+level_shift factor = 0
+DIIS = <class 'pyscf.scf.diis.CDIIS'>
+diis_start_cycle = 1
+diis_space = 8
+SCF conv_tol = 1e-09
+SCF conv_tol_grad = None
+SCF max_cycles = 50
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = /rc_scratch/ilsa8974/tmpqtx_b26t
+max_memory 4000 MB (current use 64 MB)
+number electrons alpha = 1  beta = 0
+******** <class 'pyscf.scf.uhf.HF1e'> Newton solver flags ********
+SCF tol = 1e-09
+conv_tol_grad = None
+max. SCF cycles = 100
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = /rc_scratch/ilsa8974/tmpqtx_b26t
+max_cycle_inner = 12
+max_stepsize = 0.05
+ah_start_tol = 1e+09
+ah_level_shift = 0
+ah_conv_tol = 1e-12
+ah_lindep = 1e-14
+ah_start_cycle = 1
+ah_max_cycle = 40
+ah_grad_trust_region = 2.5
+kf_interval = 4
+kf_trust_region = 5
+canonicalization = True
+max_memory 4000 MB (current use 64 MB)
+Set conv_tol_grad to 3.16228e-05
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+multiplicity <S^2> = 0.75  2S+1 = 2
+E1 = -0.49386612495542603  Ecoul = -2.889745624082107e-17
+Initial guess E= -0.493866124955426  |g|= 0.0694065
+    CPU time for initializing second order scf      0.01 sec, wall time      0.09 sec
+    |g|= 0.0694 (keyframe)
+    imic 1(1)  |g|= 0.0304  |dxi|= 0.05  max(|x|)= 0.0884  |dr|= 0.05  eig= -0.00613  seig= 0.00482
+    imic 2(2)  |g|= 4.63e-05  |dxi|= 0.039  max(|x|)= 0.039  |dr|= 0.089  eig= -0.00119  seig= 1.17e-08
+    imic 3(3)  |g|= 1.64e-13  |dxi|= 5.94e-05  max(|x|)= 5.94e-05  |dr|= 0.0891  eig= -2.75e-09  seig= 2.61e-21
+    tot inner=3  4 JK  |g|= 1.64e-13  |u-1|= 0.0891
+    CPU time for aug_hess in 3 inner iters      0.00 sec, wall time      0.00 sec
+multiplicity <S^2> = 0.75  2S+1 = 2
+E1 = -0.49999895120496696  Ecoul = 2.7505247375989486e-17
+macro= 0  E= -0.499998951204967  delta_E= -0.00613283  |g|= 0.0694065  1 KF 4 JK
+    CPU time for cycle= 1      0.01 sec, wall time      0.01 sec
+    |g|= 0.000732 (keyframe), |g-correction|= 0.000732
+    imic 1(1)  |g|= 1.85e-06  |dxi|= 0.000925  max(|x|)= 0.000925  |dr|= 0.000925  eig= -6.77e-07  seig= 3.53e-09
+    tot inner=1  2 JK  |g|= 1.85e-06  |u-1|= 0.000925
+    CPU time for aug_hess in 1 inner iters      0.01 sec, wall time      0.05 sec
+multiplicity <S^2> = 0.75  2S+1 = 2
+E1 = -0.49999962776239737  Ecoul = -8.969207345784204e-18
+macro= 1  E= -0.499999627762397  delta_E= -6.76557e-07  |g|= 0.000731791  1 KF 2 JK
+    CPU time for cycle= 2      0.01 sec, wall time      0.05 sec
+    |g|= 1.85e-06 (keyframe), |g-correction|= 8.34e-10
+    imic 1(1)  |g|= 1.85e-06  |dxi|= 2.63e-10  max(|x|)= 2.63e-10  |dr|= 2.63e-10  eig= -5.49e-20  seig= 8.55e-07
+    tot inner=1  2 JK  |g|= 1.85e-06  |u-1|= 2.63e-10
+    CPU time for aug_hess in 1 inner iters      0.01 sec, wall time      0.02 sec
+multiplicity <S^2> = 0.75  2S+1 = 2
+E1 = -0.4999996277623973  Ecoul = -1.858848018838695e-17
+macro= 2  E= -0.499999627762397  delta_E= 5.55112e-17  |g|= 1.85245e-06  1 KF 2 JK
+    CPU time for cycle= 3      0.01 sec, wall time      0.02 sec
+Canonicalize SCF orbitals
+macro X = 3  E=-0.499999627762397  |g|= 1.85245e-06  total 4 KF 12 JK
+    CPU time for Second order SCF      0.03 sec, wall time      0.19 sec
+converged SCF energy = -0.499999627762397  <S^2> = 0.75  2S+1 = 2
+**** SCF Summaries ****
+Total Energy =                          -0.499999627762397
+Nuclear Repulsion Energy =               0.000000000000000
+One-electron Energy =                   -0.499999627762397
+Two-electron Energy =                   -0.000000000000000
+**** MO energy ****
+                             alpha | beta                alpha | beta
+MO #1   energy= -0.499999627762397 | 0.0811906380502452 occ= 1 | 0
+MO #2   energy= 0.710173279185735  | 0.893771211091363  occ= 0 | 0
+MO #3   energy= 1.47043095849188   | 1.60136955266322   occ= 0 | 0
+MO #4   energy= 1.47043095849441   | 1.60136955266322   occ= 0 | 0
+MO #5   energy= 1.47043095849441   | 1.6013695526635    occ= 0 | 0
+ ** MO coefficients (expansion on meta-Lowdin AOs) for alpha spin **
+               #1        #2        #3        #4        #5       
+  0 H 1s       0.99730  -0.07337   0.00000   0.00000   0.00000
+  0 H 2s       0.07337   0.99730  -0.00000  -0.00000  -0.00000
+  0 H 2px     -0.00000   0.00000   0.43402   0.42216  -0.79587
+  0 H 2py      0.00000  -0.00000  -0.48209  -0.63745  -0.60104
+  0 H 2pz     -0.00000   0.00000   0.76106  -0.64454   0.07315
+ ** MO coefficients (expansion on meta-Lowdin AOs) for beta spin **
+               #1        #2        #3        #4        #5       
+  0 H 1s       0.95302   0.30289   0.00000   0.00000  -0.00000
+  0 H 2s       0.30289  -0.95302  -0.00000  -0.00000   0.00000
+  0 H 2px      0.00000   0.00000  -0.40030  -0.80785   0.43260
+  0 H 2py     -0.00000  -0.00000   0.65472  -0.58242  -0.48180
+  0 H 2pz      0.00000   0.00000   0.64118   0.09037   0.76205
+
+To work with the spin densities directly, `use mulliken_meta_spin()` only printing them here.
+
+ ** Mulliken spin pop alpha/beta on meta-lowdin orthogonal AOs **
+ ** Mulliken Spin Density (per AO)  **
+spin_pop of  0 H 1s        0.99462
+spin_pop of  0 H 2s        0.00538
+spin_pop of  0 H 2px       0.00000
+spin_pop of  0 H 2py       0.00000
+spin_pop of  0 H 2pz       0.00000
+ ** Mulliken Spin Density (per atom)  **
+spin density of  0 H =      1.00000
+ ** Mulliken pop alpha/beta on meta-lowdin orthogonal AOs **
+ ** Mulliken pop       alpha | beta **
+pop of  0 H 1s        0.99462 | 0.00000   
+pop of  0 H 2s        0.00538 | 0.00000   
+pop of  0 H 2px       0.00000 | 0.00000   
+pop of  0 H 2py       0.00000 | 0.00000   
+pop of  0 H 2pz       0.00000 | 0.00000   
+In total             1.00000 | 0.00000   
+ ** Mulliken atomic charges   ( Nelec_alpha | Nelec_beta ) **
+charge of  0H =      0.00000  (     1.00000      0.00000 )
+Dipole moment(X, Y, Z, Debye):  0.00000, -0.00000,  0.00000
+Converting <class 'pyscf.soscf.newton_ah.newton.<locals>.SecondOrderUHF'> to UHF
+
+******** <class 'pyscf.cc.uccsd.UCCSD'> ********
+CC2 = 0
+CCSD nocc = (1, 0), nmo = (5, 5)
+max_cycle = 50
+direct = 0
+conv_tol = 1e-07
+conv_tol_normt = 1e-06
+diis_space = 6
+diis_start_cycle = 0
+diis_start_energy_diff = 1e+09
+max_memory 4000 MB (current use 67 MB)
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+E1 = -0.4999996277623973  Ecoul = -1.858848018838695e-17
+Init t2, MP2 energy = -3.029857620316e-35
+    CPU time for init mp2      0.00 sec, wall time      0.00 sec
+Init E_corr(CCSD) = -1.74152567249371e-12
+cycle = 1  E_corr(CCSD) = -2.21449191386577e-12  dE = -4.72966241e-13  norm(t1,t2) = 2.5532e-07
+    CPU time for CCSD iter      0.01 sec, wall time      0.01 sec
+    CPU time for CCSD      0.01 sec, wall time      0.01 sec
+UCCSD converged
+E(UCCSD) = -0.4999996277646118  E_corr = -2.214491913865768e-12
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+Intel MKL ERROR: Parameter 8 was incorrect on entry to DGEMM .
+
+
+CCSD correlation energy:  -2.214491913865768e-12
+E1 = -0.4999996277623973  Ecoul = -1.858848018838695e-17
+CCSD total energy:  -0.4999996277646118

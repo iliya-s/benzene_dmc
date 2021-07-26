@@ -1,0 +1,366 @@
+#INFO: **** input file is /projects/ilsa8974/experiments/VMCr/papers/jpghf_realspace/benzene/rhf/C/C.py ****
+import json
+import numpy as np
+from pyscf import lib, gto, scf, ao2mo, tools, fci, mcscf
+from pyscf.shciscf import shci, settings
+
+atomstring = f"C 0 0 0;"
+
+mol = gto.M(
+atom = atomstring,
+unit = "bohr",
+cart = False,
+basis = {
+'C':gto.basis.parse(
+'''
+C s
+13.073594 0.0051583
+6.541187 0.0603424
+4.573411 -0.1978471
+1.637494 -0.0810340
+0.819297 0.2321726
+0.409924 0.2914643
+0.231300 0.4336405
+0.102619 0.2131940
+0.051344 0.0049848
+C s
+0.127852 1.000000
+C p
+9.934169 0.0209076
+3.886955 0.0572698
+1.871016 0.1122682
+0.935757 0.2130082
+0.468003 0.2835815
+0.239473 0.3011207
+0.117063 0.2016934
+0.058547 0.0453575
+0.029281 0.0029775
+C p
+0.149161 1.000000
+C d
+0.561160 1.000000
+'''
+)
+},
+ecp = {
+'C':gto.basis.parse_ecp(
+'''
+C nelec 2
+C ul
+1 14.43502 4.00000
+3 8.39889 57.74008
+2 7.38188 -25.81955
+C S
+2 7.76079 52.13345
+'''
+)
+},
+spin = 2,
+verbose = 5
+)
+
+gto.write_gto(mol)
+gto.write_pp(mol)
+
+#RHF
+mf = scf.RHF(mol).newton()
+norbs = mol.nao
+
+dm = mf.get_init_guess()
+
+##uncomment to use current another set of orbitals as guess for density matrix
+#mo_occ = np.zeros(norbs)
+#nocc = mf.mol.nelectron // 2
+#mo_occ[:nocc] = 2
+#mo_coeff = np.zeros((norbs, norbs))
+#
+#f = open("hf.txt", 'r')
+#row = 0
+#for line in f:
+#    col = 0
+#    for coeff in line.split():
+#        mo_coeff[row, col]  = float(coeff)
+#        col = col + 1
+#    row = row + 1
+#f.close()
+#dm = mf.make_rdm1(mo_coeff, mo_occ)
+
+dm = dm + (2.0 * np.random.rand(norbs, norbs) - 1.0) / 1000
+mf.max_cycle = 100
+mf.kernel(dm0 = dm)
+mf.analyze()
+
+asAO = mol.search_ao_label(["C 2s", "C 2p"])
+f = open("asAO.txt", 'w')
+for i in range(len(asAO)):
+    f.write(f'{asAO[i]}\t')
+
+fileHF = open("hf.txt", 'w')
+for i in range(norbs):
+    for j in range(norbs):
+        fileHF.write('%16.10e '%(mf.mo_coeff[i,j]))
+    fileHF.write('\n')
+#INFO: ******************** input file end ********************
+
+
+System: uname_result(system='Linux', node='bnode0303.rc.int.colorado.edu', release='3.10.0-693.37.4.el7.x86_64', version='#1 SMP Fri Aug 10 12:34:55 EDT 2018', machine='x86_64', processor='x86_64')  Threads 1
+Python 3.7.3 (default, Mar 27 2019, 22:11:17) 
+[GCC 7.3.0]
+numpy 1.16.4  scipy 1.3.0
+Date: Mon May 24 14:31:13 2021
+PySCF version 1.7.5
+PySCF path  /projects/ilsa8974/apps/pyscf/pyscf
+GIT HEAD      ref: refs/heads/master
+GIT master branch  7a57d2f37184ea4cd3b52a590c945197b084f66d
+
+[CONFIG] conf_file None
+[INPUT] verbose = 5
+[INPUT] max_memory = 4000 
+[INPUT] num. atoms = 1
+[INPUT] num. electrons = 4
+[INPUT] charge = 0
+[INPUT] spin (= nelec alpha-beta = 2S) = 2
+[INPUT] symmetry False subgroup None
+[INPUT] Mole.unit = bohr
+[INPUT]  1 C      0.000000000000   0.000000000000   0.000000000000 AA    0.000000000000   0.000000000000   0.000000000000 Bohr
+[INPUT] ---------------- BASIS SET ---------------- 
+[INPUT] l, kappa, [nprim/nctr], expnt,             c_1 c_2 ...
+[INPUT] C
+[INPUT] 0    0    [9    /1   ]  13.073594         0.0051583
+                                6.541187          0.0603424
+                                4.573411          -0.1978471
+                                1.637494          -0.081034
+                                0.819297          0.2321726
+                                0.409924          0.2914643
+                                0.2313            0.4336405
+                                0.102619          0.213194
+                                0.051344          0.0049848
+[INPUT] 0    0    [1    /1   ]  0.127852             1
+[INPUT] 1    0    [9    /1   ]  9.934169          0.0209076
+                                3.886955          0.0572698
+                                1.871016          0.1122682
+                                0.935757          0.2130082
+                                0.468003          0.2835815
+                                0.239473          0.3011207
+                                0.117063          0.2016934
+                                0.058547          0.0453575
+                                0.029281          0.0029775
+[INPUT] 1    0    [1    /1   ]  0.149161             1
+[INPUT] 2    0    [1    /1   ]  0.56116              1
+
+nuclear repulsion = 0
+number of shells = 5
+number of NR pGTOs = 45
+number of NR cGTOs = 13
+basis = {'C': [[0, [13.073594, 0.0051583], [6.541187, 0.0603424], [4.573411, -0.1978471], [1.637494, -0.081034], [0.819297, 0.2321726], [0.409924, 0.2914643], [0.2313, 0.4336405], [0.102619, 0.213194], [0.051344, 0.0049848]], [0, [0.127852, 1.0]], [1, [9.934169, 0.0209076], [3.886955, 0.0572698], [1.871016, 0.1122682], [0.935757, 0.2130082], [0.468003, 0.2835815], [0.239473, 0.3011207], [0.117063, 0.2016934], [0.058547, 0.0453575], [0.029281, 0.0029775]], [1, [0.149161, 1.0]], [2, [0.56116, 1.0]]]}
+ecp = {'C': [2, [[-1, [[], [[14.43502, 4.0]], [[7.38188, -25.81955]], [[8.39889, 57.74008]], [], [], []]], [0, [[], [], [[7.76079, 52.13345]], [], [], [], []]]]]}
+CPU time:         0.39
+
+
+
+
+******** <class 'pyscf.scf.rohf.ROHF'> ********
+method = ROHF-RHF
+initial guess = minao
+damping factor = 0
+level_shift factor = 0
+DIIS = <class 'pyscf.scf.diis.CDIIS'>
+diis_start_cycle = 1
+diis_space = 8
+SCF conv_tol = 1e-09
+SCF conv_tol_grad = None
+SCF max_cycles = 50
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = /rc_scratch/ilsa8974/tmpbhcy0t1v
+max_memory 4000 MB (current use 66 MB)
+num. doubly occ = 1  num. singly occ = 2
+******** <class 'pyscf.scf.rohf.ROHF'> Newton solver flags ********
+SCF tol = 1e-09
+conv_tol_grad = None
+max. SCF cycles = 100
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = /rc_scratch/ilsa8974/tmpbhcy0t1v
+max_cycle_inner = 12
+max_stepsize = 0.05
+ah_start_tol = 1e+09
+ah_level_shift = 0
+ah_conv_tol = 1e-12
+ah_lindep = 1e-14
+ah_start_cycle = 1
+ah_max_cycle = 40
+ah_grad_trust_region = 2.5
+kf_interval = 4
+kf_trust_region = 5
+canonicalization = True
+max_memory 4000 MB (current use 66 MB)
+Set conv_tol_grad to 3.16228e-05
+
+WARN: HOMO -0.0720975719925572 >= LUMO -0.0718049360420812
+
+                  Roothaan           | alpha              | beta
+  Highest 2-occ = -0.706520474317922 | -0.706520474317922 | -0.706520474317922
+  Lowest 0-occ =  -0.0718049360420812 | -0.0718049360420815 | -0.0718049360420815
+  1-occ =         -0.0727323951865304 | -0.0727323951865304 | -0.0727323951865304
+  1-occ =         -0.0720975719925572 | -0.0720975719925576 | -0.0720975719925576
+  Roothaan mo_energy =
+[-0.70652047 -0.0727324  -0.07209757 -0.07180494  0.69725804  0.70167701
+  0.70189602  0.95174526  1.43196968  1.43238104  1.43287255  1.43351475
+  1.43354943]
+E1 = -8.130064579611423  Ecoul = 2.8424471976129126
+Initial guess E= -5.28761738199851  |g|= 0.155722
+    CPU time for initializing second order scf      0.02 sec, wall time      0.15 sec
+    |g|= 0.156 (keyframe)
+    imic 1(1)  |g|= 0.0903  |dxi|= 0.0834  max(|x|)= 0.0796  |dr|= 0.0834  eig= -0.0207  seig= 0.0242
+    imic 2(2)  |g|= 0.0207  |dxi|= 0.0814  max(|x|)= 0.0642  |dr|= 0.159  eig= -0.00901  seig= 0.00138
+    imic 3(3)  |g|= 8.53e-05  |dxi|= 0.0244  max(|x|)= 0.0149  |dr|= 0.182  eig= -0.000483  seig= 2.1e-07
+E1 = -8.346386450110648  Ecoul = 3.032122334883831
+Adjust keyframe g_orb to |g|= 0.003  |g-correction|=0.00301  E=-5.31426411523 dE=-0.026647
+Out of trust region. Restore previouse step
+    tot inner=3  5 JK  |g|= 0.0207  |u-1|= 0.0244
+    CPU time for aug_hess in 3 inner iters      0.01 sec, wall time      0.01 sec
+Overlap to initial guess, SVD = [0.99998083 0.99376871 0.99367613]
+Overlap to last step, SVD = [0.99998083 0.99376871 0.99367613]
+  HOMO = -0.137737286978558  LUMO = 0.0526348705673761
+                  Roothaan           | alpha              | beta
+  Highest 2-occ = -0.713074489682337 | -0.831695224206222 | -0.594453834846937
+  Lowest 0-occ =  0.0526348705673761 | 0.0273941940709383 | 0.0778755386453147
+  1-occ =          -0.13774631270145 | -0.436765183594618 |  0.165452274319674
+  1-occ =         -0.137737286978558 | -0.436819369880194 |  0.165480397180364
+  Roothaan mo_energy =
+[-0.71307449 -0.13774631 -0.13773729  0.05263487  0.68448228  0.68453289
+  0.71517777  0.94806488  1.42181715  1.42502822  1.4250308   1.43471167
+  1.43471167]
+E1 = -8.3283262721568  Ecoul = 3.0144143125410663
+macro= 0  E= -5.31391195961573  delta_E= -0.0262946  |g|= 0.155722  2 KF 5 JK
+    CPU time for cycle= 1      0.01 sec, wall time      0.01 sec
+    |g|= 0.0183 (keyframe), |g-correction|= 0.00252
+    imic 1(1)  |g|= 0.000928  |dxi|= 0.0208  max(|x|)= 0.0127  |dr|= 0.0208  eig= -0.000362  seig= 0.000594
+    imic 2(2)  |g|= 8.49e-05  |dxi|= 0.000337  max(|x|)= 0.000219  |dr|= 0.0208  eig= -2.9e-07  seig= 8.12e-08
+    imic 3(3)  |g|= 5.6e-05  |dxi|= 0.00014  max(|x|)= 0.000121  |dr|= 0.0208  eig= -9.61e-09  seig= 4.09e-09
+E1 = -8.343504236457981  Ecoul = 3.029229599972108
+Adjust keyframe g_orb to |g|= 5.44e-05  |g-correction|=2.89e-05  E=-5.31427463649 dE=-0.00036268
+    imic 4(4)  |g|= 2.16e-05  |dxi|= 8.25e-05  max(|x|)= 7.54e-05  |dr|= 8.25e-05  eig= -2.49e-09  seig= 4.22e-10
+    imic 5(5)  |g|= 2.72e-06  |dxi|= 1.99e-05  max(|x|)= 8.64e-06  |dr|= 8.51e-05  eig= -4.18e-10  seig= 1.91e-10
+    tot inner=5  7 JK  |g|= 2.72e-06  |u-1|= 8.51e-05
+    CPU time for aug_hess in 5 inner iters      0.01 sec, wall time      0.05 sec
+Overlap to initial guess, SVD = [0.99208502 0.99196963]
+Overlap to last step, SVD = [0.99998665 0.99989997 0.99989691]
+  HOMO = -0.131761743344202  LUMO = 0.0565580844651293
+                  Roothaan           | alpha              | beta
+  Highest 2-occ = -0.707202494626018 | -0.826793844052304 | -0.587611145231783
+  Lowest 0-occ =  0.0565580844651293 | 0.0313685789057781 | 0.0817475900244353
+  1-occ =         -0.131761989392184 | -0.435320793210538 |  0.171797357783848
+  1-occ =         -0.131761743344202 | -0.435321996824558 |  0.171797999554509
+  Roothaan mo_energy =
+[-0.70720249 -0.13176199 -0.13176174  0.05655808  0.68510499  0.68510618
+  0.72062096  0.95137983  1.42611621  1.429336    1.42933601  1.43903846
+  1.43903846]
+E1 = -8.343501499940245  Ecoul = 3.029226860318681
+macro= 1  E= -5.31427463962156  delta_E= -0.00036268  |g|= 5.44099e-05  2 KF 7 JK
+    CPU time for cycle= 2      0.01 sec, wall time      0.05 sec
+    |g|= 4.47e-06 (keyframe), |g-correction|= 4.68e-06
+    imic 1(1)  |g|= 3.12e-06  |dxi|= 3.36e-06  max(|x|)= 1.46e-06  |dr|= 3.36e-06  eig= -1.2e-11  seig= 3.94e-10
+    tot inner=1  2 JK  |g|= 3.12e-06  |u-1|= 3.36e-06
+    CPU time for aug_hess in 1 inner iters      0.01 sec, wall time      0.06 sec
+Overlap to initial guess, SVD = [0.99208507 0.99196958]
+Overlap to last step, SVD = []
+  HOMO = -0.13176176805568  LUMO = 0.0565581075932697
+                  Roothaan           | alpha              | beta
+  Highest 2-occ = -0.707202472551869 | -0.826793823658355 | -0.587611121478196
+  Lowest 0-occ =  0.0565581075932697 | 0.0313686024524783 | 0.0817476127339788
+  1-occ =         -0.131761902537104 | -0.435321043233035 |  0.171797531355965
+  1-occ =          -0.13176176805568 | -0.435321699671665 |  0.171797881701795
+  Roothaan mo_energy =
+[-0.70720247 -0.1317619  -0.13176177  0.05655811  0.68510528  0.68510593
+  0.72062099  0.95137984  1.42611624  1.42933603  1.42933604  1.43903848
+  1.43903848]
+E1 = -8.343501591235885  Ecoul = 3.029226951602384
+macro= 2  E= -5.3142746396335  delta_E= -1.19371e-11  |g|= 4.46986e-06  1 KF 2 JK
+    CPU time for cycle= 3      0.01 sec, wall time      0.06 sec
+Canonicalize SCF orbitals
+macro X = 3  E=-5.3142746396335  |g|= 4.46986e-06  total 6 KF 18 JK
+    CPU time for Second order SCF      0.05 sec, wall time      0.31 sec
+converged SCF energy = -5.3142746396335
+**** SCF Summaries ****
+Total Energy =                          -5.314274639633501
+Nuclear Repulsion Energy =               0.000000000000000
+One-electron Energy =                   -8.343501591235885
+Two-electron Energy =                    3.029226951602384
+**** MO energy ****
+                Roothaan           | alpha              | beta
+MO #1   energy= -0.707202472539891 | -0.826793841073982 | -0.587611104005799 occ= 2
+MO #2   energy= -0.131761902547429 | -0.435321043279321 | 0.171797238184464  occ= 1
+MO #3   energy= -0.131761768055014 | -0.435321699672013 | 0.171798163561987  occ= 1
+MO #4   energy= 0.056558107593202  | 0.0313686024524669 | 0.0817476127339371 occ= 0
+MO #5   energy= 0.685105276864059  | 0.625618911607     | 0.74459164212112   occ= 0
+MO #6   energy= 0.685105925201925  | 0.625619406349246  | 0.744592444054602  occ= 0
+MO #7   energy= 0.720620992758592  | 0.704687765637417  | 0.736554219879767  occ= 0
+MO #8   energy= 0.951379844971342  | 0.923925647164568  | 0.978834042778122  occ= 0
+MO #9   energy= 1.42611623531544   | 1.39095744198417   | 1.46127502864671   occ= 0
+MO #10  energy= 1.42933602845526   | 1.38216057857752   | 1.47651147833299   occ= 0
+MO #11  energy= 1.42933603728449   | 1.38216055424154   | 1.47651152032745   occ= 0
+MO #12  energy= 1.43903848244931   | 1.35653991990058   | 1.52153704499804   occ= 0
+MO #13  energy= 1.43903848244932   | 1.35653991990055   | 1.52153704499808   occ= 0
+ ** MO coefficients (expansion on meta-Lowdin AOs) **
+               #1        #2        #3        #4        #5       
+  0 C 2s       1.00000   0.00001   0.00000   0.00000  -0.00000
+  0 C 3s       0.00002  -0.00000  -0.00000   0.00000  -0.00000
+  0 C 2px      0.00000  -0.10330  -0.99456   0.01345   0.00001
+  0 C 2py      0.00000  -0.06292   0.02031   0.97695  -0.00000
+  0 C 2pz     -0.00001   0.99266  -0.10221   0.06332   0.00000
+  0 C 3px      0.00000   0.00000   0.00001   0.00279   0.99454
+  0 C 3py     -0.00000   0.00000   0.00000   0.20298  -0.02032
+  0 C 3pz     -0.00000  -0.00000   0.00000   0.01316   0.10234
+  0 C 3dxy    -0.00007   0.00000   0.00000  -0.00000   0.00000
+  0 C 3dyz    -0.00031  -0.00000   0.00000   0.00000   0.00000
+  0 C 3dz^2    0.00136   0.00000  -0.00000   0.00000  -0.00000
+  0 C 3dxz    -0.00000  -0.00000  -0.00000  -0.00000  -0.00000
+ 0 C 3dx2-y2   0.00238   0.00000   0.00000   0.00000   0.00000
+               #6        #7        #8        #9        #10      
+  0 C 2s       0.00000  -0.00000  -0.00003   0.00276  -0.00000
+  0 C 3s       0.00000  -0.00000   1.00000   0.00197   0.00000
+  0 C 2px     -0.00000   0.00279  -0.00000  -0.00000   0.00000
+  0 C 2py     -0.00000   0.20298   0.00000  -0.00000   0.00000
+  0 C 2pz      0.00000   0.01316   0.00000   0.00000  -0.00000
+  0 C 3px     -0.10343  -0.01344   0.00000   0.00000  -0.00000
+  0 C 3py     -0.06292  -0.97695  -0.00000   0.00000  -0.00000
+  0 C 3pz      0.99264  -0.06332  -0.00000  -0.00000   0.00000
+  0 C 3dxy    -0.00000  -0.00000  -0.00005   0.02373   0.14287
+  0 C 3dyz     0.00000   0.00000  -0.00022   0.11178  -0.98169
+  0 C 3dz^2   -0.00000   0.00000   0.00097  -0.49372  -0.11066
+  0 C 3dxz     0.00000  -0.00000  -0.00000   0.00154  -0.00436
+ 0 C 3dx2-y2  -0.00000   0.00000   0.00170  -0.86207  -0.05998
+               #11       #12       #13      
+  0 C 2s      -0.00000   0.00000  -0.00000
+  0 C 3s       0.00000  -0.00000  -0.00000
+  0 C 2px      0.00000   0.00000  -0.00000
+  0 C 2py      0.00000   0.00000   0.00000
+  0 C 2pz      0.00000  -0.00000  -0.00000
+  0 C 3px     -0.00000  -0.00000   0.00000
+  0 C 3py     -0.00000  -0.00000  -0.00000
+  0 C 3pz     -0.00000   0.00000   0.00000
+  0 C 3dxy     0.98725   0.02913  -0.05935
+  0 C 3dyz     0.13939  -0.05925  -0.02902
+  0 C 3dz^2    0.01581   0.83648   0.20985
+  0 C 3dxz     0.06595  -0.24366   0.96760
+ 0 C 3dx2-y2   0.03631  -0.48638  -0.12386
+ ** Mulliken pop on meta-lowdin orthogonal AOs  **
+ ** Mulliken pop  **
+pop of  0 C 2s        1.99998
+pop of  0 C 3s        0.00000
+pop of  0 C 2px       0.99981
+pop of  0 C 2py       0.00437
+pop of  0 C 2pz       0.99582
+pop of  0 C 3px       0.00000
+pop of  0 C 3py       0.00000
+pop of  0 C 3pz       0.00000
+pop of  0 C 3dxy      0.00000
+pop of  0 C 3dyz      0.00000
+pop of  0 C 3dz^2     0.00000
+pop of  0 C 3dxz      0.00000
+pop of  0 C 3dx2-y2    0.00001
+ ** Mulliken atomic charges  **
+charge of  0C =      0.00000
+Dipole moment(X, Y, Z, Debye): -0.00001,  0.00000,  0.00004

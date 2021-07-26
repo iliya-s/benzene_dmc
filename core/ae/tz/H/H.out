@@ -1,0 +1,335 @@
+#INFO: **** input file is /projects/ilsa8974/experiments/VMCr/papers/jpghf_realspace/benzene/cc/ae/tz/H/H.py ****
+import json
+import numpy as np
+from pyscf import lib, gto, scf, ao2mo, tools, fci, mcscf, cc
+from pyscf.shciscf import shci, settings
+
+atomstring = ""
+atomstring += f"H 0 0 0;"
+
+mol = gto.M(
+atom = atomstring,
+unit = "bohr",
+cart = False,
+spin = 1,
+basis = "ccpvtz",
+verbose = 5
+)
+mf = scf.UHF(mol).newton()
+norbs = mol.nao
+
+dm = mf.get_init_guess()
+
+dm = dm + (2.0 * np.random.rand(norbs, norbs) - 1.0) / 1000
+mf.max_cycle = 100
+mf.kernel(dm0 = dm)
+mf.analyze()
+
+mycc = mf.CCSD()
+mycc.run()
+print("\n")
+print('CCSD correlation energy: ', mycc.e_corr)
+print('CCSD total energy: ', mf.energy_tot() + mycc.e_corr)
+#INFO: ******************** input file end ********************
+
+
+System: uname_result(system='Linux', node='bnode0303.rc.int.colorado.edu', release='3.10.0-693.37.4.el7.x86_64', version='#1 SMP Fri Aug 10 12:34:55 EDT 2018', machine='x86_64', processor='x86_64')  Threads 1
+Python 3.7.3 (default, Mar 27 2019, 22:11:17) 
+[GCC 7.3.0]
+numpy 1.16.4  scipy 1.3.0
+Date: Wed Jun  9 13:38:52 2021
+PySCF version 1.7.5
+PySCF path  /projects/ilsa8974/apps/pyscf/pyscf
+GIT HEAD      ref: refs/heads/master
+GIT master branch  7a57d2f37184ea4cd3b52a590c945197b084f66d
+
+[CONFIG] conf_file None
+[INPUT] verbose = 5
+[INPUT] max_memory = 4000 
+[INPUT] num. atoms = 1
+[INPUT] num. electrons = 1
+[INPUT] charge = 0
+[INPUT] spin (= nelec alpha-beta = 2S) = 1
+[INPUT] symmetry False subgroup None
+[INPUT] Mole.unit = bohr
+[INPUT]  1 H      0.000000000000   0.000000000000   0.000000000000 AA    0.000000000000   0.000000000000   0.000000000000 Bohr
+[INPUT] ---------------- BASIS SET ---------------- 
+[INPUT] l, kappa, [nprim/nctr], expnt,             c_1 c_2 ...
+[INPUT] H
+[INPUT] 0    0    [3    /1   ]  33.87             0.006068
+                                5.095             0.045308
+                                1.159             0.202822
+[INPUT] 0    0    [1    /1   ]  0.3258               1
+[INPUT] 0    0    [1    /1   ]  0.1027               1
+[INPUT] 1    0    [1    /1   ]  1.407                1
+[INPUT] 1    0    [1    /1   ]  0.388                1
+[INPUT] 2    0    [1    /1   ]  1.057                1
+
+nuclear repulsion = 0
+number of shells = 6
+number of NR pGTOs = 16
+number of NR cGTOs = 14
+basis = ccpvtz
+ecp = {}
+CPU time:         0.32
+
+
+
+
+******** <class 'pyscf.scf.uhf.HF1e'> ********
+method = HF1e-UHF
+initial guess = minao
+damping factor = 0
+level_shift factor = 0
+DIIS = <class 'pyscf.scf.diis.CDIIS'>
+diis_start_cycle = 1
+diis_space = 8
+SCF conv_tol = 1e-09
+SCF conv_tol_grad = None
+SCF max_cycles = 50
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = /rc_scratch/ilsa8974/tmpeax4d0v4
+max_memory 4000 MB (current use 64 MB)
+number electrons alpha = 1  beta = 0
+******** <class 'pyscf.scf.uhf.HF1e'> Newton solver flags ********
+SCF tol = 1e-09
+conv_tol_grad = None
+max. SCF cycles = 100
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = /rc_scratch/ilsa8974/tmpeax4d0v4
+max_cycle_inner = 12
+max_stepsize = 0.05
+ah_start_tol = 1e+09
+ah_level_shift = 0
+ah_conv_tol = 1e-12
+ah_lindep = 1e-14
+ah_start_cycle = 1
+ah_max_cycle = 40
+ah_grad_trust_region = 2.5
+kf_interval = 4
+kf_trust_region = 5
+canonicalization = True
+max_memory 4000 MB (current use 64 MB)
+Set conv_tol_grad to 3.16228e-05
+multiplicity <S^2> = 0.75  2S+1 = 2
+E1 = -0.49073478206027926  Ecoul = 4.31383470182177e-18
+Initial guess E= -0.490734782060279  |g|= 0.0716465
+    CPU time for initializing second order scf      0.01 sec, wall time      0.09 sec
+    |g|= 0.0716 (keyframe)
+    imic 1(1)  |g|= 0.0458  |dxi|= 0.0541  max(|x|)= 0.0918  |dr|= 0.0541  eig= -0.00712  seig= 0.00513
+    imic 2(2)  |g|= 0.018  |dxi|= 0.05  max(|x|)= 0.0818  |dr|= 0.102  eig= -0.00355  seig= 0.000682
+    imic 3(3)  |g|= 1.91e-05  |dxi|= 0.0324  max(|x|)= 0.0323  |dr|= 0.133  eig= -0.00055  seig= 7.89e-10
+E1 = -0.49980491541173516  Ecoul = 3.251316428327363e-17
+Adjust keyframe g_orb to |g|= 0.00162  |g-correction|=0.00163  E=-0.499804915412 dE=-0.0090701
+Out of trust region. Restore previouse step
+    tot inner=3  5 JK  |g|= 0.018  |u-1|= 0.0324
+    CPU time for aug_hess in 3 inner iters      0.01 sec, wall time      0.01 sec
+multiplicity <S^2> = 0.75  2S+1 = 2
+E1 = -0.499338775566864  Ecoul = 3.897518627759181e-17
+macro= 0  E= -0.499338775566864  delta_E= -0.00860399  |g|= 0.0716465  2 KF 5 JK
+    CPU time for cycle= 1      0.01 sec, wall time      0.01 sec
+    |g|= 0.0171 (keyframe), |g-correction|= 0.00107
+    imic 1(1)  |g|= 0.000898  |dxi|= 0.0295  max(|x|)= 0.0294  |dr|= 0.0295  eig= -0.000471  seig= 0.00105
+    imic 2(2)  |g|= 4.11e-06  |dxi|= 0.000398  max(|x|)= 0.000381  |dr|= 0.0294  eig= -3.45e-07  seig= 9.24e-08
+    tot inner=2  3 JK  |g|= 4.11e-06  |u-1|= 0.0294
+    CPU time for aug_hess in 2 inner iters      0.01 sec, wall time      0.04 sec
+multiplicity <S^2> = 0.75  2S+1 = 2
+E1 = -0.49980981066250985  Ecoul = 1.0121851948746432e-17
+macro= 1  E= -0.49980981066251  delta_E= -0.000471035  |g|= 0.0170932  1 KF 3 JK
+    CPU time for cycle= 2      0.01 sec, wall time      0.04 sec
+    |g|= 1.9e-05 (keyframe), |g-correction|= 1.85e-05
+    imic 1(1)  |g|= 1.96e-05  |dxi|= 1.26e-06  max(|x|)= 1.21e-06  |dr|= 1.26e-06  eig= -3.47e-12  seig= 1.59e-07
+    imic 2(2)  |g|= 1.08e-06  |dxi|= 3.42e-05  max(|x|)= 3.41e-05  |dr|= 3.46e-05  eig= -6.36e-10  seig= 4.47e-10
+    tot inner=2  3 JK  |g|= 1.08e-06  |u-1|= 3.46e-05
+    CPU time for aug_hess in 2 inner iters      0.01 sec, wall time      0.04 sec
+multiplicity <S^2> = 0.75  2S+1 = 2
+E1 = -0.49980981130148894  Ecoul = -1.3178243434563359e-17
+macro= 2  E= -0.499809811301489  delta_E= -6.38979e-10  |g|= 1.89966e-05  1 KF 3 JK
+    CPU time for cycle= 3      0.01 sec, wall time      0.04 sec
+Canonicalize SCF orbitals
+macro X = 3  E=-0.499809811301489  |g|= 1.89966e-05  total 5 KF 15 JK
+    CPU time for Second order SCF      0.03 sec, wall time      0.22 sec
+converged SCF energy = -0.499809811301489  <S^2> = 0.75  2S+1 = 2
+**** SCF Summaries ****
+Total Energy =                          -0.499809811301489
+Nuclear Repulsion Energy =               0.000000000000000
+One-electron Energy =                   -0.499809811301489
+Two-electron Energy =                   -0.000000000000000
+**** MO energy ****
+                             alpha | beta                alpha | beta
+MO #1   energy= -0.499809811301489 | 0.056229810231033  occ= 1 | 0
+MO #2   energy= 0.348763627402608  | 0.492239075611911  occ= 0 | 0
+MO #3   energy= 0.7374943756408    | 0.835383099624912  occ= 0 | 0
+MO #4   energy= 0.73749439254319   | 0.835383127296506  occ= 0 | 0
+MO #5   energy= 0.737494421799213  | 0.835383143283507  occ= 0 | 0
+MO #6   energy= 2.46973338693114   | 2.60126398847442   occ= 0 | 0
+MO #7   energy= 3.42991253607627   | 3.4864964185424    occ= 0 | 0
+MO #8   energy= 3.42991253607655   | 3.48649642432301   occ= 0 | 0
+MO #9   energy= 3.42991253607656   | 3.48649644075644   occ= 0 | 0
+MO #10  energy= 3.42991253607656   | 3.48649646920073   occ= 0 | 0
+MO #11  energy= 3.42991253607657   | 3.48649647097772   occ= 0 | 0
+MO #12  energy= 3.84602946857575   | 3.93361136853903   occ= 0 | 0
+MO #13  energy= 3.84602947534998   | 3.93361140325172   occ= 0 | 0
+MO #14  energy= 3.84602948707528   | 3.93361142330664   occ= 0 | 0
+ ** MO coefficients (expansion on meta-Lowdin AOs) for alpha spin **
+               #1        #2        #3        #4        #5       
+  0 H 1s       0.99723  -0.06024   0.00000  -0.00000  -0.00000
+  0 H 2s      -0.05782  -0.99681  -0.00000   0.00000   0.00000
+  0 H 3s      -0.04673  -0.05233   0.00000  -0.00000  -0.00000
+  0 H 2px      0.00000  -0.00000   0.11426  -0.45424   0.86763
+  0 H 2py      0.00000   0.00000  -0.95955  -0.22665   0.00770
+  0 H 2pz     -0.00000  -0.00000   0.19590  -0.84526  -0.46832
+  0 H 3px      0.00000  -0.00000   0.01933  -0.07685   0.14678
+  0 H 3py      0.00000  -0.00000  -0.16234  -0.03834   0.00130
+  0 H 3pz     -0.00000   0.00000   0.03314  -0.14300  -0.07923
+  0 H 3dxy    -0.00000   0.00000   0.00000  -0.00000   0.00000
+  0 H 3dyz    -0.00000   0.00000   0.00000  -0.00000  -0.00000
+  0 H 3dz^2   -0.00000   0.00000   0.00000   0.00000   0.00000
+  0 H 3dxz     0.00000  -0.00000  -0.00000   0.00000  -0.00000
+ 0 H 3dx2-y2  -0.00000   0.00000   0.00000   0.00000  -0.00000
+               #6        #7        #8        #9        #10      
+  0 H 1s       0.04355   0.00000   0.00000  -0.00000   0.00000
+  0 H 2s      -0.05500  -0.00000  -0.00000   0.00000  -0.00000
+  0 H 3s       0.99754   0.00000   0.00000  -0.00000   0.00000
+  0 H 2px      0.00000  -0.00000   0.00000   0.00000  -0.00000
+  0 H 2py      0.00000   0.00000   0.00000  -0.00000   0.00000
+  0 H 2pz     -0.00000  -0.00000   0.00000   0.00000  -0.00000
+  0 H 3px      0.00000   0.00000  -0.00000  -0.00000   0.00000
+  0 H 3py      0.00000  -0.00000  -0.00000   0.00000   0.00000
+  0 H 3pz     -0.00000   0.00000  -0.00000  -0.00000   0.00000
+  0 H 3dxy    -0.00000   0.09564  -0.18055  -0.27614   0.59480
+  0 H 3dyz    -0.00000   0.13195  -0.50232  -0.72004   0.05090
+  0 H 3dz^2   -0.00000   0.06745   0.54421  -0.59748  -0.49808
+  0 H 3dxz     0.00000  -0.54717   0.51011  -0.21266   0.53912
+ 0 H 3dx2-y2  -0.00000   0.81823   0.39837   0.05544   0.32385
+               #11       #12       #13       #14      
+  0 H 1s      -0.00000  -0.00000  -0.00000  -0.00000
+  0 H 2s       0.00000   0.00000   0.00000   0.00000
+  0 H 3s      -0.00000  -0.00000  -0.00000  -0.00000
+  0 H 2px     -0.00000   0.01933   0.07685  -0.14678
+  0 H 2py     -0.00000  -0.16233   0.03835  -0.00130
+  0 H 2pz      0.00000   0.03314   0.14300   0.07923
+  0 H 3px      0.00000  -0.11426  -0.45424   0.86763
+  0 H 3py      0.00000   0.95955  -0.22666   0.00770
+  0 H 3pz     -0.00000  -0.19590  -0.84526  -0.46832
+  0 H 3dxy     0.72678  -0.00000   0.00000  -0.00000
+  0 H 3dyz    -0.45739   0.00000   0.00000   0.00000
+  0 H 3dz^2    0.30694   0.00000  -0.00000   0.00000
+  0 H 3dxz    -0.32330   0.00000   0.00000   0.00000
+ 0 H 3dx2-y2  -0.25269   0.00000  -0.00000  -0.00000
+ ** MO coefficients (expansion on meta-Lowdin AOs) for beta spin **
+               #1        #2        #3        #4        #5       
+  0 H 1s       0.89536   0.43647  -0.00000  -0.00000  -0.00000
+  0 H 2s      -0.43635   0.89951  -0.00000  -0.00000   0.00000
+  0 H 3s      -0.08901  -0.01917   0.00000   0.00000  -0.00000
+  0 H 2px     -0.00000   0.00000   0.86530  -0.45302   0.11395
+  0 H 2py     -0.00000   0.00000   0.00768  -0.22605  -0.95697
+  0 H 2pz     -0.00000  -0.00000  -0.46707  -0.84299   0.19537
+  0 H 3px     -0.00000  -0.00000   0.15996  -0.08375   0.02107
+  0 H 3py     -0.00000  -0.00000   0.00142  -0.04179  -0.17691
+  0 H 3pz      0.00000   0.00000  -0.08634  -0.15584   0.03612
+  0 H 3dxy     0.00000   0.00000  -0.00000   0.00000   0.00000
+  0 H 3dyz     0.00000   0.00000   0.00000   0.00000   0.00000
+  0 H 3dz^2    0.00000   0.00000   0.00000   0.00000  -0.00000
+  0 H 3dxz    -0.00000  -0.00000  -0.00000   0.00000  -0.00000
+ 0 H 3dx2-y2   0.00000   0.00000  -0.00000  -0.00000  -0.00000
+               #6        #7        #8        #9        #10      
+  0 H 1s      -0.08843  -0.00000   0.00000   0.00000   0.00000
+  0 H 2s       0.02168  -0.00000  -0.00000   0.00000   0.00000
+  0 H 3s      -0.99585   0.00000   0.00000  -0.00000  -0.00000
+  0 H 2px      0.00000   0.00000   0.00000  -0.00000   0.00000
+  0 H 2py      0.00000  -0.00000  -0.00000  -0.00000   0.00000
+  0 H 2pz     -0.00000   0.00000  -0.00000   0.00000   0.00000
+  0 H 3px      0.00000  -0.00000  -0.00000   0.00000  -0.00000
+  0 H 3py      0.00000   0.00000   0.00000   0.00000   0.00000
+  0 H 3pz     -0.00000  -0.00000   0.00000  -0.00000  -0.00000
+  0 H 3dxy     0.00000  -0.02855  -0.20588  -0.85546   0.42170
+  0 H 3dyz     0.00000  -0.07819   0.10249   0.46380   0.78862
+  0 H 3dz^2    0.00000  -0.26970   0.70527  -0.16345  -0.29501
+  0 H 3dxz    -0.00000  -0.78003  -0.53555   0.11979  -0.19088
+ 0 H 3dx2-y2   0.00000   0.55847  -0.40360   0.10958  -0.27710
+               #11       #12       #13       #14      
+  0 H 1s       0.00000  -0.00000  -0.00000   0.00000
+  0 H 2s       0.00000  -0.00000  -0.00000   0.00000
+  0 H 3s      -0.00000  -0.00000  -0.00000   0.00000
+  0 H 2px     -0.00000   0.15996  -0.08375   0.02107
+  0 H 2py      0.00000   0.00142  -0.04179  -0.17691
+  0 H 2pz     -0.00000  -0.08634  -0.15584   0.03612
+  0 H 3px      0.00000  -0.86530   0.45302  -0.11395
+  0 H 3py     -0.00000  -0.00768   0.22605   0.95697
+  0 H 3pz     -0.00000   0.46707   0.84299  -0.19537
+  0 H 3dxy    -0.21713  -0.00000   0.00000  -0.00000
+  0 H 3dyz    -0.38257   0.00000   0.00000  -0.00000
+  0 H 3dz^2   -0.56223  -0.00000  -0.00000  -0.00000
+  0 H 3dxz    -0.23229   0.00000  -0.00000   0.00000
+ 0 H 3dx2-y2  -0.66063  -0.00000  -0.00000  -0.00000
+
+To work with the spin densities directly, `use mulliken_meta_spin()` only printing them here.
+
+ ** Mulliken spin pop alpha/beta on meta-lowdin orthogonal AOs **
+ ** Mulliken Spin Density (per AO)  **
+spin_pop of  0 H 1s        0.99447
+spin_pop of  0 H 2s        0.00334
+spin_pop of  0 H 3s        0.00218
+spin_pop of  0 H 2px       0.00000
+spin_pop of  0 H 2py       0.00000
+spin_pop of  0 H 2pz       0.00000
+spin_pop of  0 H 3px       0.00000
+spin_pop of  0 H 3py       0.00000
+spin_pop of  0 H 3pz       0.00000
+spin_pop of  0 H 3dxy      0.00000
+spin_pop of  0 H 3dyz      0.00000
+spin_pop of  0 H 3dz^2     0.00000
+spin_pop of  0 H 3dxz      0.00000
+spin_pop of  0 H 3dx2-y2    0.00000
+ ** Mulliken Spin Density (per atom)  **
+spin density of  0 H =      1.00000
+ ** Mulliken pop alpha/beta on meta-lowdin orthogonal AOs **
+ ** Mulliken pop       alpha | beta **
+pop of  0 H 1s        0.99447 | 0.00000   
+pop of  0 H 2s        0.00334 | 0.00000   
+pop of  0 H 3s        0.00218 | 0.00000   
+pop of  0 H 2px       0.00000 | 0.00000   
+pop of  0 H 2py       0.00000 | 0.00000   
+pop of  0 H 2pz       0.00000 | 0.00000   
+pop of  0 H 3px       0.00000 | 0.00000   
+pop of  0 H 3py       0.00000 | 0.00000   
+pop of  0 H 3pz       0.00000 | 0.00000   
+pop of  0 H 3dxy      0.00000 | 0.00000   
+pop of  0 H 3dyz      0.00000 | 0.00000   
+pop of  0 H 3dz^2     0.00000 | 0.00000   
+pop of  0 H 3dxz      0.00000 | 0.00000   
+pop of  0 H 3dx2-y2    0.00000 | 0.00000   
+In total             1.00000 | 0.00000   
+ ** Mulliken atomic charges   ( Nelec_alpha | Nelec_beta ) **
+charge of  0H =      0.00000  (     1.00000      0.00000 )
+Dipole moment(X, Y, Z, Debye): -0.00000, -0.00000,  0.00000
+Converting <class 'pyscf.soscf.newton_ah.newton.<locals>.SecondOrderUHF'> to UHF
+
+******** <class 'pyscf.cc.uccsd.UCCSD'> ********
+CC2 = 0
+CCSD nocc = (1, 0), nmo = (14, 14)
+max_cycle = 50
+direct = 0
+conv_tol = 1e-07
+conv_tol_normt = 1e-06
+diis_space = 6
+diis_start_cycle = 0
+diis_start_energy_diff = 1e+09
+max_memory 4000 MB (current use 67 MB)
+E1 = -0.49980981130148894  Ecoul = -1.3178243434563359e-17
+Init t2, MP2 energy = -2.71835145341639e-33
+    CPU time for init mp2      0.00 sec, wall time      0.00 sec
+Init E_corr(CCSD) = -2.98182374258541e-13
+cycle = 1  E_corr(CCSD) = -3.44481304805232e-13  dE = -4.62989305e-14  norm(t1,t2) = 4.78052e-08
+    CPU time for CCSD iter      0.01 sec, wall time      0.01 sec
+    CPU time for CCSD      0.01 sec, wall time      0.01 sec
+UCCSD converged
+E(UCCSD) = -0.4998098113018334  E_corr = -3.444813048052322e-13
+
+
+CCSD correlation energy:  -3.444813048052322e-13
+E1 = -0.49980981130148894  Ecoul = -1.3178243434563359e-17
+CCSD total energy:  -0.49980981130183344
